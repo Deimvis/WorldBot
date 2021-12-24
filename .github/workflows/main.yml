@@ -36,7 +36,7 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest
+          python main.py & pytest
 
   continuous-deployment:
     runs-on: ubuntu-latest
