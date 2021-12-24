@@ -31,7 +31,10 @@ def test_parsing_quotes():
         pytest.fail('Parsing quotes failed:\n{}'.format(e))
 
 def test_quotes_menu_is_working():
-    bot = telebot.TeleBot(os.getenv('TEST_BOT_TOKEN'))
-    chat_id = os.getenv('TEST_CHAT_ID')
-    send_quotes_menu(bot, chat_id)
+    try:
+        bot = telebot.TeleBot(os.getenv('TEST_BOT_TOKEN'))
+        chat_id = os.getenv('TEST_CHAT_ID')
+        send_quotes_menu(bot, chat_id)
+    except Exception as e:
+        pytest.fail('Sending quotes menu failed:\n{}'.format(e))
 
