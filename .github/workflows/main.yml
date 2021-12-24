@@ -30,11 +30,8 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-2
 
-      - name: Configure env
-        run: export
-
-#      - name: Run linter
-#        run: flake8 . --count --show-source --statistics
+      - name: Run linter
+        run: flake8 . --count --show-source --statistics
 
       - name: Run tests
         run: python -m pytest

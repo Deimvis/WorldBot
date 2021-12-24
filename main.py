@@ -1,4 +1,5 @@
-import datetime, random, re, requests, sys, threading
+import re
+import threading
 import telebot
 from telebot import types
 from config import BOT_TOKEN
@@ -17,15 +18,18 @@ from apps.quotes.utils import DayOfWeekRUEN, get_build_quotes_subscription_statu
 bot = telebot.TeleBot(BOT_TOKEN)
 build_quotes_subscription = dict()
 
+
 def main_menu():
     markup = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
     button_quotes = types.KeyboardButton('💫 Хочу стать мудрее!')
     markup.add(button_quotes)
     return markup
 
+
 @bot.message_handler(commands=['start'])
 def start(message):
     bot.send_message(message.chat.id, 'Привет! 🖐\nЧто на этот раз?', reply_markup=main_menu())
+
 
 @bot.message_handler(content_types=['text'])
 def send_text(message):
@@ -58,6 +62,7 @@ def send_text(message):
     else:
         bot.reply_to(message, 'Я тебя не понимаю 😔', reply_markup=main_menu())
 
+
 @bot.callback_query_handler(func=lambda call: call.data in ['great_quotes'])
 def quotes_subscription_name(call):
     if get_build_quotes_subscription_status(call.message.chat.id, build_quotes_subscription) != 'need name':
@@ -66,6 +71,7 @@ def quotes_subscription_name(call):
     message_text = 'Отлично!\nТеперь выбери, как часто ты хочешь получать цитату'
     bot.edit_message_text(message_text, call.message.chat.id,
                           call.message.message_id, reply_markup=quotes_subscription_type_menu())
+
 
 @bot.callback_query_handler(func=lambda call: call.data in ['every_day', 'every_week'])
 def quotes_subscription_type(call):
@@ -84,6 +90,7 @@ def quotes_subscription_type(call):
                        '<День недели>-<номер часа в 24-часовом формате времени>\n' \
                        'Например, Понедельник-10 или Вторник-18'
         bot.send_message(call.message.chat.id, message_text)
+
 
 @bot.callback_query_handler(func=lambda call: call.data in ['10', '11', '12', '13', 'other'])
 def quotes_subscription_value(call):

@@ -6,10 +6,13 @@ import telebot
 from apps.quotes.api import send_quotes_menu
 from apps.quotes.utils import get_great_quotes_list
 
+BOT_TOKEN = os.getenv('TEST_BOT_TOKEN')
+
 
 def simple_start():
-    bot = telebot.TeleBot(os.getenv('TEST_BOT_TOKEN'))
+    bot = telebot.TeleBot(BOT_TOKEN)
     bot.polling()
+
 
 def test_simple_start():
     try:
@@ -30,11 +33,11 @@ def test_parsing_quotes():
     except Exception as e:
         pytest.fail('Parsing quotes failed:\n{}'.format(e))
 
+
 def test_quotes_menu_is_working():
     try:
-        bot = telebot.TeleBot(os.getenv('TEST_BOT_TOKEN'))
+        bot = telebot.TeleBot(BOT_TOKEN)
         chat_id = os.getenv('TEST_CHAT_ID')
         send_quotes_menu(bot, chat_id)
     except Exception as e:
         pytest.fail('Sending quotes menu failed:\n{}'.format(e))
-

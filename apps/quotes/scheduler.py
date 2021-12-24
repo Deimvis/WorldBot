@@ -1,7 +1,4 @@
-import calendar, datetime, os, pytz, time, threading
-from functools import wraps
-import telebot
-from telebot import types
+import calendar, datetime, pytz, time
 from config import DB_PATH
 from apps.quotes.api import send_great_quote
 from apps.quotes.sqlite import QuotesSQLiteDatabase
@@ -38,7 +35,8 @@ class QuotesSubscription:
     def update_notifications_list(self):
         db = QuotesSQLiteDatabase(DB_PATH)
         response_1 = db.get_quotes_subscriptions('every_day', self.next_notification_hour)
-        response_2 = db.get_quotes_subscriptions('every_week', self.next_notification_day_of_week + '-' + self.next_notification_hour)
+        response_2 = db.get_quotes_subscriptions('every_week',
+                                                 self.next_notification_day_of_week + '-' + self.next_notification_hour)
         self.notifications = []
         for row in (response_1 + response_2):
             notification = self.Notification(row[1], row[2])

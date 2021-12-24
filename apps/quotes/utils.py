@@ -1,4 +1,3 @@
-import os
 import requests
 import re
 from config import DB_PATH
@@ -15,10 +14,12 @@ DayOfWeekRUEN = {
     'воскресенье' : 'Sunday'
 }
 
+
 class Quote:
     def __init__(self, text=None, author=None):
         self.text = text
         self.author = author
+
 
 def get_build_quotes_subscription_status(chat_id, build_quotes_subscription):
     cond1 = chat_id in build_quotes_subscription
@@ -32,6 +33,7 @@ def get_build_quotes_subscription_status(chat_id, build_quotes_subscription):
         return 'need type'
     else:
         return 'need name'
+
 
 def get_great_quotes_list():
     r = requests.get('https://www.forbes.ru/forbeslife/dosug/262327-na-vse-vremena-100-vdokhnovlyayushchikh-tsitat')
@@ -57,6 +59,7 @@ def get_great_quotes_list():
         quotes.append(quote)
 
     return quotes
+
 
 def update_great_quotes():
     db = QuotesSQLiteDatabase(DB_PATH)

@@ -3,6 +3,7 @@ import sqlite3
 
 QuotesSubscriptionsLIMIT = 5
 
+
 class QuotesSubscriptionsLimitException(Exception):
     def __init__(self, message='Не получилось оформить подписку:\n'
                                'Превышено допустимое количество подписок на выбранные цитаты для данного чата'):
@@ -58,5 +59,3 @@ class QuotesSQLiteDatabase:
 
     def close(self):
         self.connection.close()
-
-
