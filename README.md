@@ -14,3 +14,9 @@
 <hr/>
 <center><h3>Happy New Year!</h3></center> 
 <img src="misc/happy_new_year.jpeg" width="500" height="750"/>
+
+ <hr/>
+ Student: Брусенин Дмитрий Александрович<br/>
+ Bot server: Amazon AWS EC2<br/>
+ Auto launch: Github workflow + Amazon CodeDeploy<br/>
+ 
