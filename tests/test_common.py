@@ -15,7 +15,7 @@ def test_simple_start():
     try:
         p = multiprocessing.Process(target=simple_start)
         p.start()
-        p.join(10)
+        p.join(5)
         assert p.is_alive()
         p.terminate()
         p.join()
