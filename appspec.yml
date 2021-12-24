@@ -1,0 +1,34 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /home/ec2-user/world_bot
+permissions:
+  - object: ./scripts/stop.sh
+    mode: 777
+    owner: ec2-user
+    type:
+      - file
+  - object: ./scripts/prepare.sh
+    mode: 777
+    owner: ec2-user
+    type:
+      - file
+  - object: ./scripts/start.sh
+    mode: 777
+    owner: ec2-user
+    type:
+      - file
+hooks:
+  ApplicationStop:
+    - location: ./scripts/stop.sh
+      timeout: 300
+      runas: ec2-user
+  BeforeInstall:
+    - location: ./scripts/prepare.sh
+      timeout: 300
+      runas: ec2-user
+  ApplicationStart:
+    - location: ./scripts/start.sh
+      timeout: 300
+      runas: ec2-user
