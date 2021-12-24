@@ -19,7 +19,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          pip install flake8
+          pip install -r requirements_dev.txt
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -36,7 +36,7 @@ jobs:
 
       - name: Run tests
         run: |
-          echo "tests done"
+          pytest
 
   continuous-deployment:
     runs-on: ubuntu-latest
