@@ -34,7 +34,7 @@ def get_build_quotes_subscription_status(chat_id, build_quotes_subscription):
 
 def get_great_quotes_list():
     r = requests.get('https://www.forbes.ru/forbeslife/dosug/262327-na-vse-vremena-100-vdokhnovlyayushchikh-tsitat')
-    parsed_ = re.findall(r'class="article-node-text">.*?</div', r.text)
+    parsed_ = re.findall(r'<p class="yl27R" style="text-align:left;">.*?</p>', r.text)
 
     quote_text = []
     authors = []

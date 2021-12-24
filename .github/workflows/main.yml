@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+      TEST_BOT_TOKEN: ${{ secrets.TEST_BOT_TOKEN }}
     steps:
       - uses: actions/checkout@v2
 
@@ -35,8 +36,7 @@ jobs:
 #        run: flake8 . --count --show-source --statistics
 
       - name: Run tests
-        run: |
-          python main.py & pytest
+        run: pytest
 
   continuous-deployment:
     runs-on: ubuntu-latest
