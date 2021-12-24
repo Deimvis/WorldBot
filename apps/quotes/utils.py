@@ -1,6 +1,7 @@
 import os
 import requests
 import re
+from config import DB_PATH
 from apps.quotes.sqlite import QuotesSQLiteDatabase
 
 
@@ -58,7 +59,7 @@ def get_great_quotes_list():
     return quotes
 
 def update_great_quotes():
-    db = QuotesSQLiteDatabase(os.getenv('DB_PATH', 'db.db'))
+    db = QuotesSQLiteDatabase(DB_PATH)
     great_quotes = get_great_quotes_list()
     for quote in great_quotes:
         db.add_great_quote(quote)

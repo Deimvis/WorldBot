@@ -2,6 +2,7 @@ import os
 import random
 import telebot
 from telebot import types
+from config import DB_PATH
 from apps.quotes.utils import Quote, update_great_quotes
 from apps.quotes.sqlite import QuotesSQLiteDatabase, QuotesSubscriptionsLimitException
 
@@ -49,7 +50,7 @@ def send_quotes_menu(bot, chat_id):
     bot.send_message(chat_id, 'Выбирай, что по душе {head}'.format(head=head), reply_markup=quotes_menu())
 
 def send_great_quote(bot, chat_id):
-    db = QuotesSQLiteDatabase(os.getenv('DB_PATH', 'db.db'))
+    db = QuotesSQLiteDatabase(DB_PATH)
     while True:
         great_quotes = db.get_great_quotes()
         if great_quotes:
@@ -64,7 +65,7 @@ def send_quotes_subscription_menu(bot, chat_id):
     bot.send_message(chat_id, message_text, reply_markup=quotes_subscription_name_menu())
 
 def handle_quotes_subscription(bot, chat_id, subscription):
-    db = QuotesSQLiteDatabase(os.getenv('DB_PATH', 'db.db'))
+    db = QuotesSQLiteDatabase(DB_PATH)
     try:
         db.add_quotes_subscriber(chat_id, subscription['name'], subscription['type'], subscription['value'])
     except QuotesSubscriptionsLimitException as e:

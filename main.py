@@ -1,7 +1,7 @@
 import datetime, random, re, requests, sys, threading
 import telebot
 from telebot import types
-from auth_token import token
+from config import BOT_TOKEN
 from apps.quotes.api import (
     send_quotes_menu,
     send_great_quote,
@@ -14,7 +14,7 @@ from apps.quotes.scheduler import QuotesSubscription
 from apps.quotes.utils import DayOfWeekRUEN, get_build_quotes_subscription_status
 
 
-bot = telebot.TeleBot(token)
+bot = telebot.TeleBot(BOT_TOKEN)
 build_quotes_subscription = dict()
 
 def main_menu():

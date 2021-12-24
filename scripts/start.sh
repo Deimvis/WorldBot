@@ -2,13 +2,16 @@
 
 cd /home/ec2-user/world_bot
 
-export DB_PATH="/home/ec2-user/database/db.db"
-export BOT_TOKEN=$(cat /home/ec2-user/.token/bot_token)
+sudo yum install -y docker
+sudo service docker start
 
-pip3 install -r requirements.txt
+sudo groupadd docker
+sudo usermod -aG docker $USER
+newgrp docker
 
-tmux new-session -d -s world_bot
-sleep 5
-tmux send-keys -t world_bot 'cd /home/ec2-user/world_bot' C-m
-tmux send-keys -t world_bot 'python3 main.py' C-m
-echo "World bot started"
+docker rmi bot
+docker build -t bot .
+docker run \
+  --env-file /home/ec2-user/secrets/.env \
+  -v /home/ec2-user/database:/bot/database \
+  bot
