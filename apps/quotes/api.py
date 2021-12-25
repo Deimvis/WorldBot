@@ -75,9 +75,33 @@ def remove_quotes_subscriptions_menu(subscriptions_cnt):
 
 
 def send_quotes_menu(bot, chat_id):
-    heads = ['🐶', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🦁', '🐵', '🙈']
-    head = random.choice(heads)
-    bot.send_message(chat_id, 'Выбирай, что по душе {head}'.format(head=head), reply_markup=quotes_menu())
+    way = random.randint(1, 6)
+    message = None
+    if way == 1:
+        heads = ['🐶', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🦁', '🐵', '🙈']
+        message = 'Выбирай, что по душе {}'.format(random.choice(heads))
+    elif way == 2:
+        message = 'Цитаты? А новогодние будут? С подааарками ☃️'
+    elif way == 3:
+        message = 'До Нового Года совсем чуть-чуть, а ты еще не все мудрости познал!\n Давай исправлять!🍀'
+    elif way == 4:
+        message = '🧸\nЯ просто оставлю его здесь.\nТак... чтобы тебе нескучно было🙂️'
+    elif way == 5:
+        message = 'А ты тоже умеешь её рисовать?\n 🦉 = ⭕ + ⭕ + ✨'
+    elif way == 6:
+        message = '"Несмотря ни на какие препятствия, я буду идтк своей цели"'
+    elif way == 7:
+        message = 'Говорят, чудеса на Новый Год и вправду случаются!\n Особенно если их творишь именно ты ✨'
+    return bot.send_message(chat_id, message, reply_markup=quotes_menu())
+
+
+def send_quotes_subscription_menu(bot, chat_id):
+    message_text = 'Супер!\nВыбирай раздел цитат, на который хотел бы подписаться!'
+    bot.send_message(chat_id, message_text, reply_markup=quotes_subscription_name_menu())
+
+
+def send_quotes_subscription_manage_menu(bot, chat_id):
+    bot.send_message(chat_id, 'Надеюсь, всё в порядке?', reply_markup=quotes_subscription_manage_menu())
 
 
 def send_great_quote(bot, chat_id):
@@ -90,15 +114,6 @@ def send_great_quote(bot, chat_id):
     quote = random.choice(great_quotes)
     response = '{text}\n_{author}_'.format(text=quote[1], author=quote[2])
     bot.send_message(chat_id, response, parse_mode='Markdown', reply_markup=quotes_menu())
-
-
-def send_quotes_subscription_menu(bot, chat_id):
-    message_text = 'Супер!\nВыбирай раздел цитат, на который хотел бы подписаться!'
-    bot.send_message(chat_id, message_text, reply_markup=quotes_subscription_name_menu())
-
-
-def send_quotes_subscription_manage_menu(bot, chat_id):
-    bot.send_message(chat_id, 'Надеюсь, всё в порядке?', reply_markup=quotes_subscription_manage_menu())
 
 
 def handle_quotes_subscription(bot, chat_id, subscription):

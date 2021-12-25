@@ -36,7 +36,8 @@ def main_menu():
 
 @bot.message_handler(commands=['start'])
 def start(message):
-    bot.send_message(message.chat.id, 'Привет! 🖐\nЧто на этот раз?', reply_markup=main_menu())
+    bot.send_message(message.chat.id,
+                     'Привет! 🖐\nС наступающим Новым Годом! ❄️️\nЧто на этот раз?', reply_markup=main_menu())
 
 
 @bot.message_handler(content_types=['text'])
