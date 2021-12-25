@@ -6,8 +6,7 @@ import telebot
 from apps.quotes.api import (
     send_quotes_menu,
     send_quotes_subscription_menu,
-    send_quotes_subscription_manage_menu,
-    send_great_quote,
+    send_quotes_subscription_manage_menu
 )
 from apps.quotes.utils import get_great_quotes_list
 
