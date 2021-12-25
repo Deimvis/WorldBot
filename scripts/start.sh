@@ -10,4 +10,5 @@ docker build -t bot .
 docker run \
   --env-file /home/ec2-user/secrets/.env \
   -v /home/ec2-user/database:/bot/database \
+  -d \
   bot
