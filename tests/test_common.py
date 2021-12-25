@@ -48,15 +48,6 @@ def test_quotes_menu_is_working():
         pytest.fail('Sending quotes menu failed:\n{}'.format(e))
 
 
-def test_send_great_quote_is_working():
-    try:
-        bot = telebot.TeleBot(BOT_TOKEN)
-        chat_id = os.getenv('TEST_CHAT_ID')
-        send_great_quote(bot, chat_id)
-    except Exception as e:
-        pytest.fail('Sending quotes menu failed:\n{}'.format(e))
-
-
 def test_send_quotes_subscription_menu_is_working():
     try:
         bot = telebot.TeleBot(BOT_TOKEN)
