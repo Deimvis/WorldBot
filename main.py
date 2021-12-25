@@ -7,16 +7,24 @@ from apps.quotes.api import (
     send_quotes_menu,
     send_great_quote,
     send_quotes_subscription_menu,
+    send_quotes_subscription_manage_menu,
     handle_quotes_subscription,
+    handle_remove_quote_subscription,
+    handle_remove_quote_subscription_do,
     quotes_subscription_type_menu,
     quotes_subscription_everyday_value_menu
 )
+from apps.quotes.utils import (
+    DayOfWeekRUEN,
+    get_build_quotes_subscription_status,
+    get_remove_quotes_subscription_status
+)
 from apps.quotes.scheduler import QuotesSubscription
-from apps.quotes.utils import DayOfWeekRUEN, get_build_quotes_subscription_status
 
 
 bot = telebot.TeleBot(BOT_TOKEN)
 build_quotes_subscription = dict()
+remove_quotes_subscription_stage = dict()
 
 
 def main_menu():
@@ -34,12 +42,15 @@ def start(message):
 @bot.message_handler(content_types=['text'])
 def send_text(message):
     if message.text == '💫 Хочу стать мудрее!':
+        # TODO: add user to db
         send_quotes_menu(bot, message.chat.id)
     elif message.text == '🔥 Великая цитата':
         send_great_quote(bot, message.chat.id)
     elif message.text == '✉️ Хочу регулярно получать цитаты':
         build_quotes_subscription[message.chat.id] = dict()
         send_quotes_subscription_menu(bot, message.chat.id)
+    elif message.text == '⚙️ Управление подписками':
+        send_quotes_subscription_manage_menu(bot, message.chat.id)
     elif (re.fullmatch(r'\d\d', message.text) and
             get_build_quotes_subscription_status(message.chat.id, build_quotes_subscription) == 'need value'):
         build_quotes_subscription[message.chat.id]['value'] = message.text
@@ -63,10 +74,24 @@ def send_text(message):
         bot.reply_to(message, 'Я тебя не понимаю 😔', reply_markup=main_menu())
 
 
+def handle_bad_interaction(chat_id):
+    build_quotes_subscription.pop(chat_id, None)
+    remove_quotes_subscription_stage.pop(chat_id, None)
+    return bot.send_message(chat_id, 'Не кликай просто так! Ты меня ломаешь 😣', reply_markup=main_menu())
+
+
+@bot.callback_query_handler(func=lambda call: call.data in ['quotes_menu'])
+def return_quotes_subscription_menu(call):
+    build_quotes_subscription.pop(call.message.chat.id, None)
+    remove_quotes_subscription_stage.pop(call.message.chat.id, None)
+    bot.clear_step_handler_by_chat_id(chat_id=call.message.chat.id)
+    send_quotes_menu(bot, call.message.chat.id)
+
+
 @bot.callback_query_handler(func=lambda call: call.data in ['great_quotes'])
 def quotes_subscription_name(call):
     if get_build_quotes_subscription_status(call.message.chat.id, build_quotes_subscription) != 'need name':
-        return bot.send_message(call.message.chat.id, 'Не кликай просто так! Ты меня ломаешь 😣')
+        return handle_bad_interaction(call.message.chat.id)
     build_quotes_subscription[call.message.chat.id]['name'] = call.data
     message_text = 'Отлично!\nТеперь выбери, как часто ты хочешь получать цитату'
     bot.edit_message_text(message_text, call.message.chat.id,
@@ -76,7 +101,7 @@ def quotes_subscription_name(call):
 @bot.callback_query_handler(func=lambda call: call.data in ['every_day', 'every_week'])
 def quotes_subscription_type(call):
     if get_build_quotes_subscription_status(call.message.chat.id, build_quotes_subscription) != 'need type':
-        return bot.send_message(call.message.chat.id, 'Не кликай просто так! Ты меня ломаешь 😣')
+        return handle_bad_interaction(call.message.chat.id)
     build_quotes_subscription[call.message.chat.id]['type'] = call.data
     if call.data == 'every_day':
         message_text = 'Великолепно!\nДело за малым! ' \
@@ -92,10 +117,10 @@ def quotes_subscription_type(call):
         bot.send_message(call.message.chat.id, message_text)
 
 
-@bot.callback_query_handler(func=lambda call: call.data in ['10', '11', '12', '13', 'other'])
+@bot.callback_query_handler(func=lambda call: call.data in ['10', '11', '12', '13', '14', '15', 'other'])
 def quotes_subscription_value(call):
     if get_build_quotes_subscription_status(call.message.chat.id, build_quotes_subscription) != 'need value':
-        return bot.send_message(call.message.chat.id, 'Не кликай просто так! Ты меня ломаешь 😣')
+        return handle_bad_interaction(call.message.chat.id)
     if call.data == 'other':
         message_text = 'Хорошо!\n' \
                        'Напиши мне время (МСК),' \
@@ -107,6 +132,26 @@ def quotes_subscription_value(call):
     subscription = build_quotes_subscription[call.message.chat.id]
     del build_quotes_subscription[call.message.chat.id]
     handle_quotes_subscription(bot, call.message.chat.id, subscription)
+
+
+@bot.callback_query_handler(func=lambda call: call.data in ['remove_quotes_subscription'])
+def remove_quotes_subscription(call):
+    return handle_remove_quote_subscription(bot, call.message.chat.id,
+                                            call.message.message_id, remove_quotes_subscription_stage)
+
+
+@bot.callback_query_handler(func=lambda call: call.data in ['remove_subscription_1',
+                                                            'remove_subscription_2',
+                                                            'remove_subscription_3',
+                                                            'remove_subscription_4',
+                                                            'remove_subscription_5'])
+def remove_quotes_subscription_do(call):
+    if get_remove_quotes_subscription_status(call.message.chat.id, remove_quotes_subscription_stage) == 'EMPTY':
+        return handle_bad_interaction(call.message.chat.id)
+    subs = remove_quotes_subscription_stage[call.message.chat.id]
+    selected_sub = subs[int(call.data[-1]) - 1]
+    remove_quotes_subscription_stage.pop(call.message.chat.id, None)
+    return handle_remove_quote_subscription_do(bot, call.message.chat.id, selected_sub)
 
 
 if __name__ == '__main__':

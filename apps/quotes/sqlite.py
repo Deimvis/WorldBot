@@ -53,9 +53,17 @@ class QuotesSQLiteDatabase:
         query = 'INSERT INTO quotes_subscriptions (chat_id, name, type, value) VALUES (?,?,?,?)'
         return self.execute(query, chat_id, name, type, value)
 
+    def get_quotes_subscriptions_for_chat(self, chat_id):
+        query = 'SELECT * FROM quotes_subscriptions WHERE chat_id=?'
+        return self.execute(query, chat_id)
+
     def remove_quotes_subscriber(self, chat_id, name, type, value):
         query = 'DELETE FROM quotes_subscriptions WHERE chat_id=? and name=? and type=? and value=?'
-        self.execute(query, chat_id, name, type, value)
+        return self.execute(query, chat_id, name, type, value)
+
+    def remove_quotes_subscription(self, id):
+        query = 'DELETE FROM quotes_subscriptions WHERE id=?'
+        return self.execute(query, id)
 
     def close(self):
         self.connection.close()
