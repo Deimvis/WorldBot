@@ -59,7 +59,7 @@ def send_text(message):
         subscription = build_quotes_subscription[message.chat.id]
         del build_quotes_subscription[message.chat.id]
         handle_quotes_subscription(bot, message.chat.id, subscription)
-    elif (re.fullmatch(r'\w+-\d\d', message.text) and
+    elif (re.fullmatch(r'\w+-\d{1,2}', message.text) and
             get_build_quotes_subscription_status(message.chat.id, build_quotes_subscription) == 'need value'):
         day_of_week_ru, hour = message.text.split('-')
         if day_of_week_ru.lower() not in DayOfWeekRUEN:

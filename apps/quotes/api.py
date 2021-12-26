@@ -128,7 +128,7 @@ def handle_quotes_subscription(bot, chat_id, subscription):
 def handle_remove_quote_subscription(bot, chat_id, message_id, remove_quotes_subscription_stage):
     db = QuotesSQLiteDatabase(DB_PATH)
     subscriptions = db.get_quotes_subscriptions_for_chat(chat_id)
-    subscriptions.sort(key=lambda row: -row[0])
+    subscriptions.sort(key=lambda row: row[0])
     if len(subscriptions) == 0:
         bot.send_message(chat_id, 'У Вас нет активных подписок на цитаты', reply_markup=quotes_menu())
     subscriptions = subscriptions[:min(len(subscriptions), 5)]
