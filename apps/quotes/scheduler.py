@@ -32,6 +32,15 @@ class QuotesSubscription:
     def next_notification_day_of_week(self):
         return calendar.day_name[self.next_notification_time.weekday()]
 
+    def wait_for_update_notifications_list(self):
+        time.sleep((self.next_notification_time - self.time).seconds - 30)
+
+    def wait_for_send_notifications(self, target_hour=None):
+        # case when update notifications was too long
+        if target_hour and target_hour != self.next_notification_hour:
+            return
+        time.sleep((self.next_notification_time - self.time).seconds)
+
     def update_notifications_list(self):
         db = QuotesSQLiteDatabase(DB_PATH)
         response_1 = db.get_quotes_subscriptions('every_day', self.next_notification_hour)
@@ -49,6 +58,9 @@ class QuotesSubscription:
 
     def run(self):
         while True:
-            time.sleep((self.next_notification_time - self.time).seconds)
-            self.send_notifications()
+            notification_hour = self.next_notification_hour
+            self.wait_for_update_notifications_list()
             self.update_notifications_list()
+            self.wait_for_send_notifications(target_hour=notification_hour)
+            self.send_notifications()
+            time.sleep(10)

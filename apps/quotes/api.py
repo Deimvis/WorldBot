@@ -75,7 +75,7 @@ def remove_quotes_subscriptions_menu(subscriptions_cnt):
 
 
 def send_quotes_menu(bot, chat_id):
-    way = random.randint(1, 6)
+    way = random.randint(1, 7)
     message = None
     if way == 1:
         heads = ['🐶', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🦁', '🐵', '🙈']
@@ -91,7 +91,7 @@ def send_quotes_menu(bot, chat_id):
     elif way == 6:
         message = '"Несмотря ни на какие препятствия, я буду идти к своей цели"'
     elif way == 7:
-        message = 'Говорят, чудеса на Новый Год и вправду случаются!\n Особенно если их творишь именно ты ✨'
+        message = 'Говорят, чудеса на Новый Год и вправду случаются!\nОсобенно если их творишь именно ты ✨'
     return bot.send_message(chat_id, message, reply_markup=quotes_menu())
 
 

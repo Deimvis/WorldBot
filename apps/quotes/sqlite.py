@@ -65,5 +65,21 @@ class QuotesSQLiteDatabase:
         query = 'DELETE FROM quotes_subscriptions WHERE id=?'
         return self.execute(query, id)
 
+    def has_user(self, chat_id):
+        query = 'SELECT EXISTS(SELECT 1 FROM users WHERE chat_id=?)'
+        return self.execute(query, chat_id)
+
+    def add_user(self, chat_id, username, first_name, last_name):
+        query = 'INSERT INTO users (chat_id, username, first_name, last_name) VALUES (?,?,?,?)'
+        return self.execute(query, chat_id, username, first_name, last_name)
+
+    def remove_user(self, chat_id, username, first_name, last_name):
+        query = 'DELETE FROM users WHERE chat_id=? and username=? and first_name=? and last_name=?'
+        return self.execute(query, chat_id, username, first_name, last_name)
+
+    def update_user(self, chat_id, username, first_name, last_name):
+        query = 'REPLACE INTO users (chat_id, username, first_name, last_name) VALUES (?,?,?,?)'
+        return self.execute(query, chat_id, username, first_name, last_name)
+
     def close(self):
         self.connection.close()

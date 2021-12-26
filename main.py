@@ -2,7 +2,7 @@ import re
 import threading
 import telebot
 from telebot import types
-from config import BOT_TOKEN
+from config import BOT_TOKEN, DB_PATH
 from apps.quotes.api import (
     send_quotes_menu,
     send_great_quote,
@@ -20,6 +20,7 @@ from apps.quotes.utils import (
     get_remove_quotes_subscription_status
 )
 from apps.quotes.scheduler import QuotesSubscription
+from apps.quotes.sqlite import QuotesSQLiteDatabase
 
 
 bot = telebot.TeleBot(BOT_TOKEN)
@@ -36,6 +37,7 @@ def main_menu():
 
 @bot.message_handler(commands=['start'])
 def start(message):
+    update_user_info(message)
     bot.send_message(message.chat.id,
                      'Привет! 🖐\nС наступающим Новым Годом! ❄️️\nЧто на этот раз?', reply_markup=main_menu())
 
@@ -43,7 +45,6 @@ def start(message):
 @bot.message_handler(content_types=['text'])
 def send_text(message):
     if message.text == '💫 Хочу стать мудрее!':
-        # TODO: add user to db
         send_quotes_menu(bot, message.chat.id)
     elif message.text == '🔥 Великая цитата':
         send_great_quote(bot, message.chat.id)
@@ -52,7 +53,7 @@ def send_text(message):
         send_quotes_subscription_menu(bot, message.chat.id)
     elif message.text == '⚙️ Управление подписками':
         send_quotes_subscription_manage_menu(bot, message.chat.id)
-    elif (re.fullmatch(r'\d\d', message.text) and
+    elif (re.fullmatch(r'\d{1,2}', message.text) and
             get_build_quotes_subscription_status(message.chat.id, build_quotes_subscription) == 'need value'):
         build_quotes_subscription[message.chat.id]['value'] = message.text
         subscription = build_quotes_subscription[message.chat.id]
@@ -79,6 +80,11 @@ def handle_bad_interaction(chat_id):
     build_quotes_subscription.pop(chat_id, None)
     remove_quotes_subscription_stage.pop(chat_id, None)
     return bot.send_message(chat_id, 'Не кликай просто так! Ты меня ломаешь 😣', reply_markup=main_menu())
+
+
+def update_user_info(message):
+    db = QuotesSQLiteDatabase(DB_PATH)
+    db.update_user(message.chat.id, message.chat.username, message.chat.first_name, message.chat.last_name)
 
 
 @bot.callback_query_handler(func=lambda call: call.data in ['quotes_menu'])

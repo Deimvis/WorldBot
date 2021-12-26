@@ -4,7 +4,7 @@
 <li>https://t.me/world_smart_bot</li>
 <br/>
 
-**Functionalty:**
+**Functionality:**
 <ul>
  <li>Send random great quote</li>
  <li>Subscribe user to send quotes in specified time</li>
