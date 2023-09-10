@@ -1,7 +1,6 @@
 import requests
 import re
-from config import DB_PATH
-from apps.quotes.sqlite import QuotesSQLiteDatabase
+from pydantic import BaseModel, validator
 
 
 DayOfWeekRUEN = {
@@ -25,10 +24,14 @@ DayOfWeekENRU = {
 }
 
 
-class Quote:
-    def __init__(self, text=None, author=None):
-        self.text = text
-        self.author = author
+class Quote(BaseModel):
+    author: str
+    text: str
+
+    @validator('author')
+    def is_author_valid(cls, v):
+        assert 0 <= len(v) <= 1000, 'Author name is too long'
+        return v
 
 
 class Subscription:
@@ -92,36 +95,3 @@ def get_remove_quotes_subscription_status(chat_id, remove_quotes_subscription_st
     if chat_id not in remove_quotes_subscription_stage:
         return 'EMPTY'
     return 'need select'
-
-
-def get_great_quotes_list():
-    r = requests.get('https://www.forbes.ru/forbeslife/dosug/262327-na-vse-vremena-100-vdokhnovlyayushchikh-tsitat')
-    parsed_ = re.findall(r'<p class="yl27R" style="text-align:left;">.*?</p>', r.text)
-
-    quote_text = []
-    authors = []
-    for i in range(len(parsed_)):
-        string = parsed_[i]
-        if (i % 2 == 0):
-            text = re.search(r'[а-яА-Я].*?<', string)
-            quote_text.append(text[0] if text else None)
-        else:
-            author = re.search(r'[а-яА-Я].*?<', string)
-            authors.append(author[0] if author else None)
-
-    quote_text = list(map(lambda string: string[:len(string) - 1].strip(), quote_text))
-    authors = list(map(lambda string: string[:len(string) - 1].strip(), authors))
-
-    quotes = []
-    for text, author in zip(quote_text, authors):
-        quote = Quote(text, author)
-        quotes.append(quote)
-
-    return quotes
-
-
-def update_great_quotes():
-    db = QuotesSQLiteDatabase(DB_PATH)
-    great_quotes = get_great_quotes_list()
-    for quote in great_quotes:
-        db.add_great_quote(quote)

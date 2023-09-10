@@ -1,9 +1,18 @@
 import random
 from telebot import types
-from config import DB_PATH
-from apps.quotes.utils import Subscription, update_great_quotes
-from apps.quotes.sqlite import QuotesSQLiteDatabase, QuotesSubscriptionsLimitException
+from src.apps.quotes.utils import Subscription
+from src.apps.quotes.db import QUOTES_TABLE, QUOTES_SUBSCRIPTIONS_TABLE
 
+QuotesSubscriptionsLIMIT = 5
+
+
+class QuotesSubscriptionsLimitException(Exception):
+    def __init__(self, message='Не получилось оформить подписку:\n'
+                               'Превышено допустимое количество подписок на выбранные цитаты для данного чата'):
+        self.message = message
+
+    def __str__(self):
+        return self.message
 
 def quotes_menu():
     markup = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
@@ -105,29 +114,25 @@ def send_quotes_subscription_manage_menu(bot, chat_id):
 
 
 def send_great_quote(bot, chat_id):
-    db = QuotesSQLiteDatabase(DB_PATH)
-    while True:
-        great_quotes = db.get_great_quotes()
-        if great_quotes:
-            break
-        update_great_quotes()
+    great_quotes = QUOTES_TABLE.select()
     quote = random.choice(great_quotes)
     response = '{text}\n_{author}_'.format(text=quote[1], author=quote[2])
     bot.send_message(chat_id, response, parse_mode='Markdown', reply_markup=quotes_menu())
 
 
 def handle_quotes_subscription(bot, chat_id, subscription):
-    db = QuotesSQLiteDatabase(DB_PATH)
     try:
-        db.add_quotes_subscriber(chat_id, subscription['name'], subscription['type'], subscription['value'])
+        if QUOTES_SUBSCRIPTIONS_TABLE.count(where={'chat_id': chat_id, 'name': subscription['name']}) >= QuotesSubscriptionsLIMIT:
+            raise QuotesSubscriptionsLimitException
+        QUOTES_SUBSCRIPTIONS_TABLE.insert([{'chat_id': chat_id} | subscription])
+        QUOTES_SUBSCRIPTIONS_TABLE.commit()
     except QuotesSubscriptionsLimitException as e:
         return bot.send_message(chat_id, str(e), reply_markup=quotes_menu())
     bot.send_message(chat_id, '🎉 Поздравляю! Подписка оформлена!', reply_markup=quotes_menu())
 
 
 def handle_remove_quote_subscription(bot, chat_id, message_id, remove_quotes_subscription_stage):
-    db = QuotesSQLiteDatabase(DB_PATH)
-    subscriptions = db.get_quotes_subscriptions_for_chat(chat_id)
+    subscriptions = QUOTES_SUBSCRIPTIONS_TABLE.select(where={'chat_id': chat_id})
     subscriptions.sort(key=lambda row: row[0])
     if len(subscriptions) == 0:
         bot.send_message(chat_id, 'У Вас нет активных подписок на цитаты', reply_markup=quotes_menu())
@@ -144,8 +149,7 @@ def handle_remove_quote_subscription(bot, chat_id, message_id, remove_quotes_sub
 
 
 def handle_remove_quote_subscription_do(bot, chat_id, selected_subscription):
-    db = QuotesSQLiteDatabase(DB_PATH)
-    s = selected_subscription
-    db.remove_quotes_subscription(s.id)
+    QUOTES_SUBSCRIPTIONS_TABLE.delete(where={'id': selected_subscription.id})
+    QUOTES_SUBSCRIPTIONS_TABLE.commit()
     end_with = random.choice(['💣', '🔫', '⚰', '️🪦', '🔨'])
     return bot.send_message(chat_id, 'Подписка успешно удалена {}'.format(end_with), reply_markup=quotes_menu())

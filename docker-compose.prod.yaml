@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+
+  telegram-bot:
+    platform: linux/x86_64
+    image: deimvis/world_bot:latest
+    build: .
+    container_name: world-bot
+    env_file:
+      - .env.prod
+    depends_on:
+      - db
+
+  db:
+    platform: linux/x86_64
+    image: postgres:15.2
+    container_name: world-bot-db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - 5434:5432
+    env_file:
+      - .env.prod
+
+
+volumes:
+  postgres_data:

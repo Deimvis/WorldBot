@@ -1,0 +1,3 @@
+[submodule "Python-Shared-Library"]
+	path = lib
+	url = https://github.com/Deimvis/Python-Shared-Library.git

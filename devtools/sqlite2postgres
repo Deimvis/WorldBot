@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -ex
+
+# usage:   ./migrate.sh  PATH_TO_SQLITE_DATABASE         PG_HOST         PG_DBNAME   PG_USER
+# example: ./migrate.sh      $(pwd)/user.db        host.docker.internal    user      deimvis
+
+SQLITE_DBPATH=${1:-$(pwd)/db.db}
+PG_HOST=${2:-host.docker.internal}  # use host.docker.internal instead of localhost
+PG_DBNAME=${3:-mypostgresdatabase}
+PG_USER=${4:-postgres}
+
+docker run --rm -it -v ${SQLITE_DBPATH}:/db.db dimitri/pgloader:latest pgloader sqlite:///db.db pgsql://${PG_USER}@${PG_HOST}/${PG_DBNAME}
+

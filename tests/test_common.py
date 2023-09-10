@@ -3,12 +3,12 @@ import os
 import pytest
 import telebot
 
-from apps.quotes.api import (
+from src.apps.quotes.api import (
     send_quotes_menu,
     send_quotes_subscription_menu,
     send_quotes_subscription_manage_menu
 )
-from apps.quotes.utils import get_great_quotes_list
+from src.apps.quotes.utils import get_great_quotes_list
 
 BOT_TOKEN = os.getenv('TEST_BOT_TOKEN')
 

@@ -1,7 +1,6 @@
 import calendar, datetime, pytz, time
-from config import DB_PATH
-from apps.quotes.api import send_great_quote
-from apps.quotes.sqlite import QuotesSQLiteDatabase
+from src.apps.quotes.api import send_great_quote
+from src.apps.quotes.db import QUOTES_SUBSCRIPTIONS_TABLE
 
 
 class QuotesSubscription:
@@ -42,10 +41,8 @@ class QuotesSubscription:
         time.sleep((self.next_notification_time - self.time).seconds)
 
     def update_notifications_list(self):
-        db = QuotesSQLiteDatabase(DB_PATH)
-        response_1 = db.get_quotes_subscriptions('every_day', self.next_notification_hour)
-        response_2 = db.get_quotes_subscriptions('every_week',
-                                                 self.next_notification_day_of_week + '-' + self.next_notification_hour)
+        response_1 = QUOTES_SUBSCRIPTIONS_TABLE.select(where={'type': 'every_day', 'value': self.next_notification_hour})
+        response_2 = QUOTES_SUBSCRIPTIONS_TABLE.select(where={'type': 'every_week', 'value': self.next_notification_day_of_week + '-' + self.next_notification_hour})
         self.notifications = []
         for row in (response_1 + response_2):
             notification = self.Notification(row[1], row[2])

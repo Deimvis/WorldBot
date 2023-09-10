@@ -1,11 +1,15 @@
-FROM python:3.7
+FROM python:3.11.2
 
-WORKDIR /bot/world_bot
-COPY apps/ apps/
-COPY config.py .
-COPY main.py .
+WORKDIR /bot
 
 COPY requirements.txt .
-RUN pip install -r requirements.txt
+RUN pip install --upgrade pip && pip install -r requirements.txt
 
-ENTRYPOINT ["python", "main.py"]
+COPY src /bot/src
+COPY lib /bot/lib
+COPY scripts /bot/scripts
+COPY main.py .
+
+ENV PYTHONUNBUFFERED=1
+
+ENTRYPOINT ["./scripts/run"]

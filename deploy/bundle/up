@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+sudo docker-compose -f /home/dbrusenin/world_bot/docker-compose.yaml up -d $@

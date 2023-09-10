@@ -1,0 +1,3 @@
+#!/usr/bin/env
+
+docker-compose run --rm --entrypoint /bot/scripts/init_db telegram-bot

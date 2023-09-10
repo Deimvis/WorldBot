@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+
+  telegram-bot:
+    build: .
+    container_name: world-bot
+    env_file:
+      - .env.test
+    depends_on:
+      - world-bot-db
+
+  db:
+    image: postgres:15.2
+    container_name: world-bot-db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - 5434:5432
+    env_file:
+      - .env.test
+
+
+volumes:
+  postgres_data:

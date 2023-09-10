@@ -1,0 +1,84 @@
+#!/usr/bin/env python3
+import argparse
+import logging
+import os
+import sys
+from psycopg2.extensions import AsIs
+
+sys.path.append('.')
+from src.utils.postgres import PostgresConnection, drop_database
+
+
+logging.basicConfig(level=logging.DEBUG)
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description='Initialize db (Postgres)')
+    parser.add_argument('--drop', action='store_true')
+    return parser.parse_args()
+
+
+def init_db():
+    with PostgresConnection(
+                host=os.getenv('DB_HOST'),
+                port=os.getenv('DB_PORT'),
+                user=os.getenv('DB_USER'),
+                password=os.getenv('DB_PASSWORD'),
+                db_name=os.getenv('DB_NAME'),
+            ) as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                """CREATE TABLE IF NOT EXISTS %s (
+                        id BIGSERIAL PRIMARY KEY,
+                        text TEXT,
+                        author VARCHAR(255) DEFAULT '—'::varchar,
+                        language VARCHAR(3),
+                        UNIQUE(author, text)
+                    )
+                """,
+                (AsIs("great_quotes"),)
+            )
+            cursor.execute(
+                """CREATE TABLE IF NOT EXISTS %s (
+                        id BIGSERIAL PRIMARY KEY,
+                        chat_id VARCHAR(255),
+                        name VARCHAR(255),
+                        type VARCHAR(255),
+                        value VARCHAR(255)
+                    )
+                """,
+                (AsIs("quotes_subscriptions"),)
+            )
+            cursor.execute(
+                """CREATE TABLE IF NOT EXISTS %s (
+                        chat_id BIGINT PRIMARY KEY,
+                        username TEXT,
+                        first_name TEXT,
+                        last_name TEXT
+                    )
+                """,
+                (AsIs("users"),)
+            )
+    logging.info('Database "{}" has been initialized'.format(os.getenv('DB_NAME')))
+
+
+def drop_db():
+    with PostgresConnection(
+                host=os.getenv('DB_HOST'),
+                port=os.getenv('DB_PORT'),
+                user=os.getenv('DB_USER'),
+                password=os.getenv('DB_PASSWORD'),
+            ) as conn:
+        drop_database(conn, os.getenv('DB_NAME'))
+    logging.info('Database "{}" has been dropped'.format(os.getenv('DB_NAME')))
+
+
+def main():
+    args = parse_args()
+    if args.drop:
+        drop_db()
+    init_db()
+
+
+if __name__ == '__main__':
+    main()

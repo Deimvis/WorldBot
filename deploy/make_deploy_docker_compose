@@ -1,0 +1,26 @@
+#!/usr/bin/env python3
+import re
+import sys
+import logging
+
+
+def process_line(line: str) -> str | None:
+    if re.fullmatch(r'^\s*build:.*\n$', line):
+        logging.info(f'Remove line: {line.strip()}')
+        return None
+    return line
+
+
+def main():
+    original_docker_compose = sys.argv[1]
+    deploy_docker_compose = sys.argv[2]
+    with open(deploy_docker_compose, 'w') as f_out:
+        with open(original_docker_compose, 'r') as f_in:
+            for line in f_in:
+                out_line = process_line(line)
+                if out_line is not None:
+                    f_out.write(out_line)
+
+
+if __name__ == '__main__':
+    main()

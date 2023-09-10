@@ -1,9 +1,10 @@
+import os
+import logging
 import re
 import threading
 import telebot
 from telebot import types
-from config import BOT_TOKEN, DB_PATH
-from apps.quotes.api import (
+from src.apps.quotes.api import (
     send_quotes_menu,
     send_great_quote,
     send_quotes_subscription_menu,
@@ -14,16 +15,31 @@ from apps.quotes.api import (
     quotes_subscription_type_menu,
     quotes_subscription_everyday_value_menu
 )
-from apps.quotes.utils import (
+from src.apps.quotes.utils import (
     DayOfWeekRUEN,
     get_build_quotes_subscription_status,
     get_remove_quotes_subscription_status
 )
-from apps.quotes.scheduler import QuotesSubscription
-from apps.quotes.sqlite import QuotesSQLiteDatabase
+from src.apps.quotes.scheduler import QuotesSubscription
 
 
-bot = telebot.TeleBot(BOT_TOKEN)
+if os.getenv('DEBUG'):
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format='%(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s',
+        datefmt="%d/%b/%Y %H:%M:%S",
+    )
+    logging.getLogger('urllib3').setLevel(logging.WARNING)
+    logging.getLogger('yt').setLevel(logging.WARNING)
+else:
+    logging.basicConfig(
+        level=logging.INFO,
+        format='[%(asctime)s] %(levelname)s [%(name)s] %(message)s',
+        datefmt="%d/%b/%Y %H:%M:%S",
+    )
+
+
+bot = telebot.TeleBot(os.getenv('BOT_TOKEN'))
 build_quotes_subscription = dict()
 remove_quotes_subscription_stage = dict()
 
@@ -83,8 +99,15 @@ def handle_bad_interaction(chat_id):
 
 
 def update_user_info(message):
-    db = QuotesSQLiteDatabase(DB_PATH)
-    db.update_user(message.chat.id, message.chat.username, message.chat.first_name, message.chat.last_name)
+    from src.apps.core.db import USER_TABLE
+    if not USER_TABLE.has(where={'chat_id': message.chat.id}):
+        USER_TABLE.insert([{
+            'chat_id': message.chat.id,
+            'username': message.chat.username,
+            'first_name': message.chat.first_name,
+            'last_name': message.chat.last_name
+        }])
+        USER_TABLE.commit()
 
 
 @bot.callback_query_handler(func=lambda call: call.data in ['quotes_menu'])
