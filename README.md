@@ -1,7 +1,7 @@
 <h2>World : Telegram bot</h2>
 <img src="misc/world_bot_logo.jpeg" align="right" width="300" height="200"/>
-<li>@world_smart_bot</li>
-<li>https://t.me/world_smart_bot</li>
+<li>@world_inspiring_bot</li>
+<li>https://t.me/world_inspiring_bot</li>
 <br/>
 
 **Functionality:**
