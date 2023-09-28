@@ -2,7 +2,7 @@ version: '3'
 
 services:
 
-  telegram-bot:
+  world-bot:
     platform: linux/x86_64
     image: deimvis/world_bot:latest
     container_name: world-bot
@@ -10,6 +10,12 @@ services:
       - .env.prod
     depends_on:
       - db
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 3
+        window: 5s
 
   db:
     platform: linux/x86_64

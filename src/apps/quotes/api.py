@@ -1,155 +1,166 @@
-import random
-from telebot import types
-from src.apps.quotes.utils import Subscription
-from src.apps.quotes.db import QUOTES_TABLE, QUOTES_SUBSCRIPTIONS_TABLE
-
-QuotesSubscriptionsLIMIT = 5
-
-
-class QuotesSubscriptionsLimitException(Exception):
-    def __init__(self, message='Не получилось оформить подписку:\n'
-                               'Превышено допустимое количество подписок на выбранные цитаты для данного чата'):
-        self.message = message
-
-    def __str__(self):
-        return self.message
-
-def quotes_menu():
-    markup = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
-    button_great_quote = types.KeyboardButton('🔥 Великая цитата')
-    button_quote_subscription = types.KeyboardButton('✉️ Хочу регулярно получать цитаты')
-    button_quote_subscription_manage = types.KeyboardButton('⚙️ Управление подписками')
-    markup.add(button_great_quote)
-    markup.add(button_quote_subscription)
-    markup.add(button_quote_subscription_manage)
-    return markup
+import telebot
+import logging
+import src.apps.quotes.menus as menus
+from src.apps.core.types import LanguageCode
+from src.apps.quotes.db import QUOTES_SUBSCRIPTION_TABLE, get_random_quote
+from src.apps.quotes.shortcuts import get_subscription_builder
+from src.static import MSG
+from src.apps.quotes.constants import MAX_QUOTES_SUBSCRIPTIONS
+from src.apps.quotes.types import Subscription
 
 
-def quotes_subscription_name_menu():
-    markup = types.InlineKeyboardMarkup()
-    button_great_quote_subscription = types.InlineKeyboardButton('🔥 Великая цитата', callback_data='great_quotes')
-    button_return = types.InlineKeyboardButton('Вернуться назад', callback_data='quotes_menu')
-    markup.add(button_great_quote_subscription)
-    markup.add(button_return)
-    return markup
+def send_quote(bot, chat_id: int, language: LanguageCode) -> telebot.types.Message:
+    text = MSG[language.name]['quoting']
+    quote = get_random_quote(language)
+    if quote is None:
+        return bot.send_message(chat_id, text['no_quotes'].r(), reply_markup=menus.build_quotes_menu(language))
+    response = text['quote_template'].format(text=quote.text, author=quote.author or '—')
+    return bot.send_message(chat_id, response, parse_mode='HTML', reply_markup=menus.build_quotes_menu(language))
 
 
-def quotes_subscription_type_menu():
-    markup = types.InlineKeyboardMarkup()
-    button_every_day = types.InlineKeyboardButton('Каждый день', callback_data='every_day')
-    button_every_week = types.InlineKeyboardButton('Каждую неделю', callback_data='every_week')
-    markup.add(button_every_day)
-    markup.add(button_every_week)
-    return markup
+def send_quotes_menu(bot, chat_id: int, language: LanguageCode) -> telebot.types.Message:
+    return bot.send_message(chat_id, MSG[language.name]['quotes_menu'].r(), reply_markup=menus.build_quotes_menu(language))
 
 
-def quotes_subscription_everyday_value_menu():
-    markup = types.InlineKeyboardMarkup()
-    button_10 = types.InlineKeyboardButton('10:00', callback_data='10')
-    button_11 = types.InlineKeyboardButton('11:00', callback_data='11')
-    button_12 = types.InlineKeyboardButton('12:00', callback_data='12')
-    button_13 = types.InlineKeyboardButton('13:00', callback_data='13')
-    button_14 = types.InlineKeyboardButton('14:00', callback_data='14')
-    button_15 = types.InlineKeyboardButton('15:00', callback_data='15')
-    button_other = types.InlineKeyboardButton('Укажу своё', callback_data='other')
-    markup.add(button_10)
-    markup.add(button_11)
-    markup.add(button_12)
-    markup.add(button_13)
-    markup.add(button_14)
-    markup.add(button_15)
-    markup.add(button_other)
-    return markup
+def subscribe(bot, chat_id: int, language: LanguageCode) -> telebot.types.Message:
+    if QUOTES_SUBSCRIPTION_TABLE.count(where={'chat_id': chat_id}) >= MAX_QUOTES_SUBSCRIPTIONS:
+        return bot.send_message(chat_id, MSG[language.name]['subscribing']['max_subscriptions_reached'].r())
+    return send_subscribing_interval_step(bot, chat_id, language)
 
 
-def quotes_subscription_manage_menu():
-    markup = types.InlineKeyboardMarkup()
-    button_remove_subscription = types.InlineKeyboardButton('Удалить подписку',
-                                                            callback_data='remove_quotes_subscription')
-    button_return = types.InlineKeyboardButton('Вернуться назад', callback_data='quotes_menu')
-    markup.add(button_remove_subscription)
-    markup.add(button_return)
-    return markup
+def send_subscribing_interval_step(bot, chat_id: int, language: LanguageCode) -> telebot.types.Message:
+    return bot.send_message(chat_id, MSG[language.name]['subscribing']['interval_step'].r(), reply_markup=menus.build_subscribing_interval_menu(language))
 
 
-def remove_quotes_subscriptions_menu(subscriptions_cnt):
-    subscriptions_cnt = min(subscriptions_cnt, 5)
-    markup = types.InlineKeyboardMarkup()
-    for i in range(1, subscriptions_cnt + 1):
-        button = types.InlineKeyboardButton(str(i), callback_data='remove_subscription_{}'.format(i))
-        markup.add(button)
-    button_return = types.InlineKeyboardButton('Вернуться назад', callback_data='quotes_menu')
-    markup.add(button_return)
-    return markup
+def handle_subscribing_interval_step(bot, chat_id: int, msg_id: int, data: str, language: LanguageCode):
+    def fallback():
+        bot.edit_message_text(MSG[language.name]['subscribing']['cancelled'].r(), chat_id, msg_id)
+        bot.send_message(chat_id, MSG[language.name]['subscribing']['unexpected_error'].r(), reply_markup=menus.build_quotes_menu(language))
+
+    logging.debug(f'Interval step callback data: {data}')
+    interval = data.split('/')[-1]
+    get_subscription_builder(chat_id).set_interval(interval, fallback=fallback)
 
 
-def send_quotes_menu(bot, chat_id):
-    way = random.randint(1, 7)
-    message = None
-    if way == 1:
-        heads = ['🐶', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🦁', '🐵', '🙈']
-        message = 'Выбирай, что по душе {}'.format(random.choice(heads))
-    elif way == 2:
-        message = 'Цитаты? А новогодние будут? С подааарками ☃️'
-    elif way == 3:
-        message = 'До Нового Года совсем чуть-чуть, а ты еще не все мудрости познал!\nДавай исправлять!🍀'
-    elif way == 4:
-        message = '🧸\nЯ просто оставлю его здесь.\nТак... чтобы тебе нескучно было🙂️'
-    elif way == 5:
-        message = 'А ты тоже умеешь её рисовать?\n 🦉 = ⭕ + ⭕ + ✨'
-    elif way == 6:
-        message = '"Несмотря ни на какие препятствия, я буду идти к своей цели"'
-    elif way == 7:
-        message = 'Говорят, чудеса на Новый Год и вправду случаются!\nОсобенно если их творишь именно ты ✨'
-    return bot.send_message(chat_id, message, reply_markup=quotes_menu())
+def send_subscribing_base_weekday_step(bot, chat_id: int, msg_id: int, language: LanguageCode) -> telebot.types.Message:
+    return bot.edit_message_text(MSG[language.name]['subscribing']['base_weekday_step'].r(), chat_id, msg_id, reply_markup=menus.build_subscribing_base_weekday_step(language))
 
 
-def send_quotes_subscription_menu(bot, chat_id):
-    message_text = 'Супер!\nВыбирай раздел цитат, на который хотел бы подписаться!'
-    bot.send_message(chat_id, message_text, reply_markup=quotes_subscription_name_menu())
+def handle_subscribing_base_weekday_step(bot, chat_id: int, msg_id: int, data: str, language: LanguageCode):
+    def fallback():
+        bot.edit_message_text(MSG[language.name]['subscribing']['cancelled'].r(), chat_id, msg_id)
+        bot.send_message(chat_id, MSG[language.name]['subscribing']['unexpected_error'].r(), reply_markup=menus.build_quotes_menu(language))
+
+    logging.debug(f'Base weekday step callback data: {data}')
+    base_weekday = data.split('/')[-1]
+    get_subscription_builder(chat_id).set_base_weekday(base_weekday, fallback=fallback)
 
 
-def send_quotes_subscription_manage_menu(bot, chat_id):
-    bot.send_message(chat_id, 'Надеюсь, всё в порядке?', reply_markup=quotes_subscription_manage_menu())
+def send_subscribing_timezone_step(bot, chat_id: int, msg_id: int, language: LanguageCode) -> telebot.types.Message:
+    return bot.edit_message_text(MSG[language.name]['subscribing']['timezone_step'].r(), chat_id, msg_id, reply_markup=menus.build_subscribing_timezone_menu(language))
 
 
-def send_great_quote(bot, chat_id):
-    great_quotes = QUOTES_TABLE.select()
-    quote = random.choice(great_quotes)
-    response = '{text}\n_{author}_'.format(text=quote[1], author=quote[2])
-    bot.send_message(chat_id, response, parse_mode='Markdown', reply_markup=quotes_menu())
+def handle_subscribing_timezone_step(bot, chat_id: int, msg_id: int, data: str, language: LanguageCode):
+    def fallback():
+        bot.edit_message_text(MSG[language.name]['subscribing']['cancelled'].r(), chat_id, msg_id)
+        bot.send_message(chat_id, MSG[language.name]['subscribing']['unexpected_error'].r(), reply_markup=menus.build_quotes_menu(language))
+
+    logging.debug(f'Timezone step callback data: {data}')
+    timezone = data.split('/')[-1].replace('%', '/')
+    get_subscription_builder(chat_id).set_timezone(timezone, fallback=fallback)
 
 
-def handle_quotes_subscription(bot, chat_id, subscription):
-    try:
-        if QUOTES_SUBSCRIPTIONS_TABLE.count(where={'chat_id': chat_id, 'name': subscription['name']}) >= QuotesSubscriptionsLIMIT:
-            raise QuotesSubscriptionsLimitException
-        QUOTES_SUBSCRIPTIONS_TABLE.insert([{'chat_id': chat_id} | subscription])
-        QUOTES_SUBSCRIPTIONS_TABLE.commit()
-    except QuotesSubscriptionsLimitException as e:
-        return bot.send_message(chat_id, str(e), reply_markup=quotes_menu())
-    bot.send_message(chat_id, '🎉 Поздравляю! Подписка оформлена!', reply_markup=quotes_menu())
+def send_subscribing_custom_timezone_step(bot, chat_id: int, msg_id: int, language: LanguageCode) -> telebot.types.Message:
+    def handle_custom_timezone(message):
+        def fallback():
+            bot.edit_message_text(MSG[language.name]['subscribing']['cancelled'].r(), chat_id, msg_id)
+            bot.send_message(chat_id, MSG[language.name]['subscribing']['bad_custom_timezone'].r(), reply_markup=menus.build_quotes_menu(language))
+
+        logging.debug(f'Custom timezone step msg: {message.text}')
+        timezone = message.text
+        get_subscription_builder(chat_id).set_timezone(timezone, fallback=fallback)
+        send_subscribing_base_time_step(bot, chat_id, msg_id, language)
+
+    # NOTE: link to list with timezones
+    msg = bot.edit_message_text(MSG[language.name]['subscribing']['custom_timezone_step'].r(), chat_id, msg_id)
+    bot.register_next_step_handler(msg, handle_custom_timezone)
+    return msg
 
 
-def handle_remove_quote_subscription(bot, chat_id, message_id, remove_quotes_subscription_stage):
-    subscriptions = QUOTES_SUBSCRIPTIONS_TABLE.select(where={'chat_id': chat_id})
-    subscriptions.sort(key=lambda row: row[0])
-    if len(subscriptions) == 0:
-        bot.send_message(chat_id, 'У Вас нет активных подписок на цитаты', reply_markup=quotes_menu())
-    subscriptions = subscriptions[:min(len(subscriptions), 5)]
-    subscriptions = [Subscription(row) for row in subscriptions]
-    message = 'Выбери подписку для удаления:\n'
-    remove_quotes_subscription_stage[chat_id] = []
-    for ind, sub in enumerate(subscriptions):
-        s = sub.beautify()
-        message += '**{}** | {} | {}\n'.format(ind + 1, s['name'], s['type'])
-        remove_quotes_subscription_stage[chat_id].append(sub)
-    menu = remove_quotes_subscriptions_menu(len(subscriptions))
-    return bot.edit_message_text(message, chat_id, message_id, parse_mode='Markdown', reply_markup=menu)
+def send_subscribing_base_time_step(bot, chat_id: int, msg_id: int, language: LanguageCode) -> telebot.types.Message:
+    return bot.edit_message_text(MSG[language.name]['subscribing']['base_time_step'].r(), chat_id, msg_id, reply_markup=menus.build_subscribing_base_time_menu(language))
 
 
-def handle_remove_quote_subscription_do(bot, chat_id, selected_subscription):
-    QUOTES_SUBSCRIPTIONS_TABLE.delete(where={'id': selected_subscription.id})
-    QUOTES_SUBSCRIPTIONS_TABLE.commit()
-    end_with = random.choice(['💣', '🔫', '⚰', '️🪦', '🔨'])
-    return bot.send_message(chat_id, 'Подписка успешно удалена {}'.format(end_with), reply_markup=quotes_menu())
+def handle_subscribing_base_time_step(bot, chat_id: int, msg_id: int, data: str, language: LanguageCode):
+    def fallback():
+        bot.edit_message_text(MSG[language.name]['subscribing']['cancelled'].r(), chat_id, msg_id)
+        bot.send_message(chat_id, MSG[language.name]['subscribing']['unexpected_error'].r(), reply_markup=menus.build_quotes_menu(language))
+
+    logging.debug(f'Base time step callback data: {data}')
+    base_time = data.split('/')[-1].replace('%', '/')
+    get_subscription_builder(chat_id).set_base_time(base_time, fallback=fallback)
+
+
+def send_subscribing_custom_base_time_step(bot, chat_id: int, msg_id: int, language: LanguageCode) -> telebot.types.Message:
+    def handle_custom_base_time(message):
+        def fallback():
+            bot.edit_message_text(MSG[language.name]['subscribing']['cancelled'].r(), chat_id, msg_id)
+            bot.send_message(chat_id, MSG[language.name]['subscribing']['bad_custom_base_time'].r(), reply_markup=menus.build_quotes_menu(language))
+
+        logging.debug(f'Base time step msg: {message.text}')
+        base_time = message.text
+        get_subscription_builder(chat_id).set_base_time(base_time, fallback=fallback)
+        create_subscription(bot, chat_id, msg_id, language)
+
+    msg = bot.edit_message_text(MSG[language.name]['subscribing']['custom_base_time_step'].r(), chat_id, msg_id)
+    bot.register_next_step_handler(msg, handle_custom_base_time)
+    return msg
+
+
+def create_subscription(bot, chat_id: int, msg_id: int, language: LanguageCode) -> telebot.types.Message:
+    def fallback():
+        bot.edit_message_text(MSG[language.name]['subscribing']['cancelled'].r(), chat_id, msg_id)
+        bot.send_message(chat_id, MSG[language.name]['subscribing']['unexpected_error'].r(), reply_markup=menus.build_quotes_menu(language))
+
+    subscription = get_subscription_builder(chat_id).create_subscription(chat_id, language, fallback=fallback)
+    QUOTES_SUBSCRIPTION_TABLE.insert([subscription.to_database_row()])
+    QUOTES_SUBSCRIPTION_TABLE.commit()
+    bot.edit_message_text(MSG[language.name]['subscribing']['done_template'].r().format(subscription=subscription.overview(language)), chat_id, msg_id)
+    return bot.send_message(chat_id, MSG[language.name]['subscribing']['congratulations'].r(), reply_markup=menus.build_quotes_menu(language))
+
+
+def send_manage_subscriptions_menu(bot, chat_id: int, language: LanguageCode) -> telebot.types.Message:
+    text = MSG[language.name]['managing_subscriptions']
+    subscription_rows = QUOTES_SUBSCRIPTION_TABLE.select(where={'chat_id': chat_id})
+    if len(subscription_rows) == 0:
+        return bot.send_message(chat_id, text['no_subscriptions'].r(), reply_markup=menus.build_quotes_menu(language))
+    subscription_rows.sort(key=lambda row: row['id'])
+    subscriptions = [Subscription.from_database_row(row) for row in subscription_rows]
+    subscription_lines = '\n'.join(text['subscription_line_template'].r().format(num=ind+1, subscription=sub.overview(language)) for ind, sub in enumerate(subscriptions))
+    return bot.send_message(chat_id, text['main_menu_template'].r().format(subscription_lines=subscription_lines), reply_markup=menus.build_manage_subscriptions_menu(language))
+
+
+def send_remove_subscription_menu(bot, chat_id: int, msg_id: int, language: LanguageCode) -> telebot.types.Message:
+    text = MSG[language.name]['managing_subscriptions']
+    subscription_rows = QUOTES_SUBSCRIPTION_TABLE.select(where={'chat_id': chat_id})
+    if len(subscription_rows) == 0:
+        return bot.send_message(chat_id, text['no_subscriptions'].r(), reply_markup=menus.build_quotes_menu(language))
+    subscription_rows.sort(key=lambda row: row['id'])
+    subscriptions = [Subscription.from_database_row(row) for row in subscription_rows]
+    subscription_lines = '\n'.join(text['subscription_line_template'].r().format(num=ind+1, subscription=sub.overview(language)) for ind, sub in enumerate(subscriptions))
+    sub_ids = [row['id'] for row in subscription_rows]
+    return bot.edit_message_text(text['remove_menu_template'].r().format(subscription_lines=subscription_lines), chat_id, msg_id, reply_markup=menus.build_remove_subscription_menu(sub_ids, language))
+
+
+def remove_subscription(bot, chat_id: int, msg_id: int, data: str, language: LanguageCode):
+    logging.debug(f'Remove subscription callback data: {data}')
+    text = MSG[language.name]['managing_subscriptions']
+    subscription_id = int(data.split('/')[-1])
+    subscription_rows = QUOTES_SUBSCRIPTION_TABLE.select(where={'id': subscription_id})
+    if len(subscription_rows) == 0:
+        bot.edit_message_text(text['subscription_not_found'].r(), chat_id, msg_id)
+        return send_quotes_menu(bot, chat_id, language)
+    QUOTES_SUBSCRIPTION_TABLE.delete(where={'id': subscription_id})
+    QUOTES_SUBSCRIPTION_TABLE.commit()
+    subscription = Subscription.from_database_row(subscription_rows[0])
+    return bot.edit_message_text(text['removing_done_template'].r().format(subscription=subscription.overview(language)), chat_id, msg_id)

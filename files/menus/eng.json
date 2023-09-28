@@ -1,0 +1,55 @@
+{
+    "main_menu": {
+        "quotes_menu": "💫 Wish to find a new wisdom!"
+    },
+    "quotes_menu": {
+        "get_quote": "🔥 Inspirational quote",
+        "subscribe": "✉️ Receive quotes on schedule",
+        "manage_subscriptions": "⚙️ Manage subscriptions"
+    },
+    "subscribing": {
+        "interval_menu": {
+            "every_day": "Every day",
+            "every_week": "Every week",
+            "return_back": "← Return"
+        },
+        "base_weekday_menu": {
+            "monday": "Monday",
+            "tuesday": "Tuesday",
+            "wednesday": "Wednesday",
+            "thursday": "Thursday",
+            "friday": "Friday",
+            "saturday": "Saturday",
+            "sunday": "Sunday",
+            "return_back": "← Return"
+        },
+        "timezone_menu": {
+            "timezone_1": "UTC",
+            "timezone_2": "EST",
+            "timezone_3": "Europe/Moscow",
+            "timezone_4": "Europe/Amsterdam",
+            "timezone_5": "America/Adak",
+            "custom_timezone": "Another time zone",
+            "return_back": "← Return"
+        },
+        "base_time_menu": {
+            "base_time_1": "10:00",
+            "base_time_2": "11:00",
+            "base_time_3": "12:00",
+            "base_time_4": "13:00",
+            "base_time_5": "14:00",
+            "custom_base_time": "Another time",
+            "return_back": "← Return"
+        }
+    },
+    "managing_subscriptions": {
+        "main_menu": {
+            "remove": "Remove subscription",
+            "return_back": "← Return"
+        },
+        "remove_menu": {
+            "button_template": "{num}",
+            "return_back": "← Return"
+        }
+    }
+}

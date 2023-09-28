@@ -22,13 +22,13 @@ class TestStateNode(unittest.TestCase):
         node['key'] = 'value'
         self.assertEqual(node['key'], 'value')
 
-    def test_reservation(self):
+    def test_freezing(self):
         node = StateNode()
-        node.reserve_key('aaa')
+        node.freeze_key('aaa')
         with self.assertRaises(AssertionError):
             node['aaa'] = 'value'
 
         node['bbb'] = 'value'
-        node.reserve_key('bbb')
+        node.freeze_key('bbb')
         with self.assertRaises(AssertionError):
             node['bbb'] = 'new_value'

@@ -10,4 +10,3 @@
  <li>Subscribe user for receiving quotes in specified day and time</li>
 <ul>
 <br/>
- 

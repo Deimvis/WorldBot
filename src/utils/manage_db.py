@@ -28,7 +28,7 @@ def init_db():
                         UNIQUE(author, text)
                     )
                 """,
-                (AsIs("great_quotes"),)
+                (AsIs("quote"),)
             )
             cursor.execute(
                 """CREATE TABLE IF NOT EXISTS %s (
@@ -39,7 +39,7 @@ def init_db():
                         value VARCHAR(255)
                     )
                 """,
-                (AsIs("quotes_subscriptions"),)
+                (AsIs("quotes_subscription"),)
             )
             cursor.execute(
                 """CREATE TABLE IF NOT EXISTS %s (
@@ -49,7 +49,7 @@ def init_db():
                         last_name TEXT
                     )
                 """,
-                (AsIs("users"),)
+                (AsIs("user"),)
             )
     logging.debug('Database "{}" has been initialized'.format(os.getenv('DB_NAME')))
 

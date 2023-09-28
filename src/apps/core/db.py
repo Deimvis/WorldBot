@@ -1,3 +1,4 @@
+import telebot
 import os
 import psycopg2
 from lib.storages.postgres import PostgresTable
@@ -12,4 +13,15 @@ connection = psycopg2.connect(
 )
 
 
-USER_TABLE = PostgresTable(connection, 'users')
+USER_TABLE = PostgresTable(connection, 'user')
+
+
+def update_user_info(user: telebot.types.User):
+    if not USER_TABLE.has(where={'id': user.id}):
+        USER_TABLE.insert([{
+            'id': user.id,
+            'username': user.username,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+        }])
+        USER_TABLE.commit()

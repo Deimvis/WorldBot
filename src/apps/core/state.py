@@ -23,8 +23,9 @@ class Session(BaseModel):
 
     @classmethod
     def assert_satisfy_ISO639_3(cls, v):
+        # TODO: make common method to check for ISO639-3
         assert v in ('RUS', 'ENG')
 
 
 GLOBAL_STATE['sessions'] = {}
-GLOBAL_STATE.reserve_key('sessions')
+GLOBAL_STATE.freeze_key('sessions')

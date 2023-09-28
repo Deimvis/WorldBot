@@ -2,4 +2,4 @@
 
 set -e
 
-python -m unittest discover -p "test_*.py"
+python -m unittest discover -p "test_*.py" $@

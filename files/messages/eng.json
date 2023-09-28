@@ -1,0 +1,39 @@
+{
+    "start": "Hi! 🖐\nWelcome to the kingdom of knowledge. What are we going to do this modest evening?",
+    "bad_message_reaction": "Sorry, can't understand you 😔",
+    "quotes_menu": [
+        "🧸\n I will just leave him there.\nSo... don't feel lonely 🙂️",
+        "Do you also know how to draw an owl?\n  🦉 = ⭕ + ⭕ + ✨",
+        "\"Follow your own path, no matter what people say.\"",
+        "The only way to make your life full is never stop dreaming 🪂"
+    ],
+    "quoting": {
+        "no_quotes": "Wow! Something serious must've happened - I found no quotes.\nCome back later, I'm already trying to fix everything",
+        "quote_template": "{text}\n<i>{author}</i>"
+    },
+    "subscribing": {
+        "max_subscriptions_reached": "Can't created a new subscription:\nMaximum number of subscriptions for this chat has been reached",
+        "interval_step": "Cool! Choose how often you want to receive quotes",
+        "base_weekday_step": "Choose day of week",
+        "timezone_step": "Specify your time zone",
+        "custom_timezone_step": "Text me your timezone\nAll supported timezones: TODO",
+        "bad_custom_timezone": "Specified timezone is not found. Please check all supported timezones: TODO",
+        "base_time_step": "Last step: Choose preferrable time",
+        "custom_base_time_step": "Text me preferrable time in 24-hour format HH:MM\nFor example, 08:00 or 13:45",
+        "bad_custom_base_time": "Specified time is incorrect",
+        "congratulations": "🎉 Congratulations! Subscription has been successfully created!",
+        "done_template": "New subscription:\n{subscription}",
+        "cancelled": "Subscription creation is cancelled",
+        "unexpected_error": "Oops, something went wrong. Please try again"
+    },
+    "managing_subscriptions": {
+        "no_subscriptions": "It looks like you don't have subscriptions yet. Come back when you get one 🙂",
+        "subscription_not_found": "This subscription is not found.\nMaybe it was removed earlier",
+        "subscription_line_template": "{num}) {subscription}",
+        "main_menu_template": "Here are your subscriptions:\n{subscription_lines}",
+        "remove_menu_template": "Choose which one you want to remove:\n{subscription_lines}",
+        "removing_done_template": "Subscription \"{subscription}\" is removed 🪦"
+    },
+    "last_updates": "@FILE:last_updates/eng.txt",
+    "about": "@FILE:about/eng.txt"
+}

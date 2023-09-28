@@ -50,5 +50,6 @@ def create_database(conn: psycopg2.extensions.connection, db_name: str, if_not_e
 
 
 def drop_database(conn: psycopg2.extensions.connection, db_name: str):
-    with conn.cursor() as cursor:
-        cursor.execute('DROP DATABASE IF EXISTS %s', (AsIs(db_name),))
+    with temp_setattr(conn, 'autocommit', True):
+        with conn.cursor() as cursor:
+            cursor.execute('DROP DATABASE IF EXISTS %s', (AsIs(db_name),))

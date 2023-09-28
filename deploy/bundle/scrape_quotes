@@ -1,0 +1,5 @@
+#!/usr/bin/env
+
+set -e
+
+docker-compose run --rm --entrypoint '/bot/scripts/scrape_quotes' world-bot

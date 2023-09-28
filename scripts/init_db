@@ -6,7 +6,7 @@ import sys
 from psycopg2.extensions import AsIs
 
 sys.path.append('.')
-from src.utils.postgres import PostgresConnection, drop_database
+from src.utils.postgres import PostgresConnection, create_database, drop_database
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -33,33 +33,50 @@ def init_db():
                         text TEXT,
                         author VARCHAR(255) DEFAULT '—'::varchar,
                         language VARCHAR(3),
+                        source VARCHAR,
                         UNIQUE(author, text)
                     )
                 """,
-                (AsIs("great_quotes"),)
+                (AsIs("quote"),)
             )
             cursor.execute(
                 """CREATE TABLE IF NOT EXISTS %s (
                         id BIGSERIAL PRIMARY KEY,
-                        chat_id VARCHAR(255),
-                        name VARCHAR(255),
-                        type VARCHAR(255),
-                        value VARCHAR(255)
+                        chat_id      BIGINT     NOT NULL,
+                        base_weekday SMALLINT,
+                        base_hour    SMALLINT   NOT NULL,
+                        base_minute  SMALLINT   NOT NULL,
+                        timezone     VARCHAR    NOT NULL,
+                        language     VARCHAR(3) NOT NULL,
+                        creation_ts  BIGINT,
+                        _raw         VARCHAR    NOT NULL
                     )
                 """,
-                (AsIs("quotes_subscriptions"),)
+                (AsIs("quotes_subscription"),)
             )
             cursor.execute(
-                """CREATE TABLE IF NOT EXISTS %s (
-                        chat_id BIGINT PRIMARY KEY,
+                '''CREATE TABLE IF NOT EXISTS "%s" (
+                        id BIGINT PRIMARY KEY,
                         username TEXT,
                         first_name TEXT,
                         last_name TEXT
                     )
-                """,
-                (AsIs("users"),)
+                ''',
+                (AsIs("user"),)
             )
     logging.info('Database "{}" has been initialized'.format(os.getenv('DB_NAME')))
+
+
+def create_db():
+    with PostgresConnection(
+                host=os.getenv('DB_HOST'),
+                port=os.getenv('DB_PORT'),
+                user=os.getenv('DB_USER'),
+                password=os.getenv('DB_PASSWORD'),
+                db_name='postgres',
+            ) as conn:
+        create_database(conn, os.getenv('DB_NAME'), if_not_exists=True)
+    logging.info('Database "{}" has been created'.format(os.getenv('DB_NAME')))
 
 
 def drop_db():
@@ -68,6 +85,7 @@ def drop_db():
                 port=os.getenv('DB_PORT'),
                 user=os.getenv('DB_USER'),
                 password=os.getenv('DB_PASSWORD'),
+                db_name='postgres',
             ) as conn:
         drop_database(conn, os.getenv('DB_NAME'))
     logging.info('Database "{}" has been dropped'.format(os.getenv('DB_NAME')))
@@ -77,6 +95,7 @@ def main():
     args = parse_args()
     if args.drop:
         drop_db()
+        create_db()
     init_db()
 
 

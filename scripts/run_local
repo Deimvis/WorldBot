@@ -1,0 +1,15 @@
+#!/usr/bin/env zsh
+
+set -e
+
+set -o allexport
+source .env.test
+set +o allexport
+
+python main.py &
+
+PROCESS_PID=$!
+echo $PROCESS_PID
+trap "echo Stopped!; kill ${PROCESS_PID}; exit;" SIGINT SIGTERM
+
+while true; do; done

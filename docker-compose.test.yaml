@@ -2,7 +2,7 @@ version: '3'
 
 services:
 
-  telegram-bot:
+  world-bot:
     build: .
     container_name: world-bot
     env_file:

@@ -1,0 +1,55 @@
+{
+    "main_menu": {
+        "quotes_menu": "💫 Хочу стать мудрее!"
+    },
+    "quotes_menu": {
+        "get_quote": "🔥 Великие слова",
+        "subscribe": "✉️ Хочу регулярно получать цитаты",
+        "manage_subscriptions": "⚙️ Управление подписками"
+    },
+    "subscribing": {
+        "interval_menu": {
+            "every_day": "Каждый день",
+            "every_week": "Каждую неделю",
+            "return_back": "← Вернуться назад"
+        },
+        "base_weekday_menu": {
+            "monday": "Понедельник",
+            "tuesday": "Вторник",
+            "wednesday": "Среда",
+            "thursday": "Четверг",
+            "friday": "Пятница",
+            "saturday": "Суббота",
+            "sunday": "Воскресенье",
+            "return_back": "← Вернуться назад"
+        },
+        "timezone_menu": {
+            "timezone_1": "Europe/Moscow",
+            "timezone_2": "Etc/GMT+3",
+            "timezone_3": "Etc/GMT+6",
+            "timezone_4": "Etc/GMT+9",
+            "timezone_5": "Etc/GMT+12",
+            "custom_timezone": "Другой часовой пояс",
+            "return_back": "← Вернуться назад"
+        },
+        "base_time_menu": {
+            "base_time_1": "10:00",
+            "base_time_2": "11:00",
+            "base_time_3": "12:00",
+            "base_time_4": "13:00",
+            "base_time_5": "14:00",
+            "custom_base_time": "Другое время",
+            "return_back": "← Вернуться назад"
+        }
+    },
+    "managing_subscriptions": {
+        "main_menu": {
+            "remove": "Удалить подписку",
+            "return_back": "← Вернуться назад"
+        },
+        "remove_menu": {
+            "button_template": "{num}",
+            "return_back": "← Вернуться назад"
+        }
+    }
+}
