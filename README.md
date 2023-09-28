@@ -7,7 +7,7 @@
 **Functionality:**
 <ul>
  <li>Send random great quote</li>
- <li>Subscribe user to send quotes in specified time</li>
+ <li>Subscribe user for receiving quotes in specified day and time</li>
 <ul>
 <br/>
  
