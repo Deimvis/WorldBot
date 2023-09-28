@@ -48,7 +48,7 @@
             "return_back": "← Return"
         },
         "remove_menu": {
-            "button_template": "{num}",
+            "button_template": "Remove {num}",
             "return_back": "← Return"
         }
     }

@@ -79,6 +79,11 @@ def on_manage_subscriptions_call(bot, callback):
     api.send_manage_subscriptions_menu(bot, callback.message.chat.id, get_language(callback))
 
 
+def on_manage_subscriptions_return_call(bot, callback):
+    bot.delete_message(callback.message.chat.id, callback.message.message_id)
+    api.send_quotes_menu(bot, callback.message.chat.id, get_language(callback))
+
+
 def on_remove_subscription_menu_call(bot, callback):
     api.send_remove_subscription_menu(bot, callback.message.chat.id, callback.message.message_id, get_language(callback))
 
@@ -86,3 +91,7 @@ def on_remove_subscription_menu_call(bot, callback):
 def on_remove_subscription_call(bot, callback):
     api.remove_subscription(bot, callback.message.chat.id, callback.message.message_id, callback.data, get_language(callback))
     api.send_manage_subscriptions_menu(bot, callback.message.chat.id, get_language(callback))
+
+
+def on_remove_subscription_return_call(bot, callback):
+    api.return_to_manage_subscriptions_menu(bot, callback.message.chat.id, callback.message.message_id, get_language(callback))

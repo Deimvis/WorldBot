@@ -168,3 +168,15 @@ def remove_subscription(bot, chat_id: int, msg_id: int, data: str, language: Lan
     QUOTES_SUBSCRIPTION_TABLE.commit()
     subscription = Subscription.from_database_row(subscription_rows[0])
     return bot.edit_message_text(text['removing_done_template'].r().format(subscription=subscription.overview(language)), chat_id, msg_id)
+
+
+def return_to_manage_subscriptions_menu(bot, chat_id: int, msg_id: int, language: LanguageCode) -> telebot.types.Message:
+    text = MSG[language.name]['managing_subscriptions']
+    subscription_rows = QUOTES_SUBSCRIPTION_TABLE.select(where={'chat_id': chat_id})
+    if len(subscription_rows) == 0:
+        bot.delete_message(chat_id, msg_id)
+        return bot.send_message(chat_id, text['no_subscriptions'].r(), reply_markup=menus.build_quotes_menu(language))
+    subscription_rows.sort(key=lambda row: row['id'])
+    subscriptions = [Subscription.from_database_row(row) for row in subscription_rows]
+    subscription_lines = '\n'.join(text['subscription_line_template'].r().format(num=ind+1, subscription=sub.overview(language)) for ind, sub in enumerate(subscriptions))
+    return bot.edit_message_text(text['main_menu_template'].r().format(subscription_lines=subscription_lines), chat_id, msg_id, reply_markup=menus.build_manage_subscriptions_menu(language))

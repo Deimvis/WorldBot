@@ -72,6 +72,7 @@ def build_subscribing_base_time_menu(language: LanguageCode):
         types.InlineKeyboardButton(text['base_time_5'],      callback_data=callback_prefix + text['base_time_5'].replace('/', '%')),
         types.InlineKeyboardButton(text['custom_base_time'], callback_data=callback_prefix + 'CUSTOM'),
         types.InlineKeyboardButton(text['return_back'],     callback_data=callback_prefix + 'RETURN'),
+        row_width=2,
     )
     return markup
 
@@ -97,5 +98,5 @@ def build_remove_subscription_menu(sub_ids: Sequence[int], language: LanguageCod
           for ind, sub_id in enumerate(sub_ids)),
         row_width=2,
     )
-    markup.add(types.InlineKeyboardButton(text['return_back'], callback_data='managing_subscriptions/main_menu'))
+    markup.add(types.InlineKeyboardButton(text['return_back'], callback_data=callback_prefix + 'RETURN'))
     return markup

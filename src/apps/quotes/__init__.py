@@ -40,5 +40,9 @@ def register_handlers(bot):
         (apply(bot)(handlers.on_manage_subscriptions_call))
     bot.callback_query_handler(func=lambda call: call.data == 'managing_subscriptions/main_menu/REMOVE')\
         (apply(bot)(handlers.on_remove_subscription_menu_call))
+    bot.callback_query_handler(func=lambda call: call.data == 'managing_subscriptions/main_menu/RETURN')\
+        (apply(bot)(handlers.on_manage_subscriptions_return_call))
+    bot.callback_query_handler(func=lambda call: call.data == 'managing_subscriptions/remove_menu/RETURN')\
+        (apply(bot)(handlers.on_remove_subscription_return_call))
     bot.callback_query_handler(func=lambda call: call.data.startswith('managing_subscriptions/remove_menu/'))\
         (apply(bot)(handlers.on_remove_subscription_call))

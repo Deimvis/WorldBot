@@ -48,7 +48,7 @@
             "return_back": "← Вернуться назад"
         },
         "remove_menu": {
-            "button_template": "{num}",
+            "button_template": "Удалить {num}",
             "return_back": "← Вернуться назад"
         }
     }
