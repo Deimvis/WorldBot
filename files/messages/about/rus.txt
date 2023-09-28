@@ -1,7 +1,7 @@
 Я создан, чтобы вдохновлять тебя никто не сдаваться, улыбаться каждому дню и жить счастливо несмотря ни на что!
 
 Мой создатель: @dbrusenin
-Мой исходный код: <a href="https://github.com/Deimvis/WorldSmartBot">github</a>
+Мой исходный код: <a href="https://github.com/Deimvis/WorldBot">github</a>
 
 <b>Контакты:</b>
 Linkedin: <a href="https://www.linkedin.com/in/dmitriy-brusenin/">Dmitriy Brusenin</a>

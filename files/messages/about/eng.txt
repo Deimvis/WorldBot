@@ -1,7 +1,7 @@
 I'm here to inspire you to never give up, to smile everyday and to live a happy life no matter what!
 
 My creator: @dbrusenin
-My source code: <a href="https://github.com/Deimvis/WorldSmartBot">github</a>
+My source code: <a href="https://github.com/Deimvis/WorldBot">github</a>
 
 <b>Contacts:</b>
 Linkedin: <a href="https://www.linkedin.com/in/dmitriy-brusenin/">Dmitriy Brusenin</a>
