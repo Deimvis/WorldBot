@@ -20,7 +20,7 @@ def build_subscribing_interval_menu(language: LanguageCode):
     markup.add(
         types.InlineKeyboardButton(text['every_day'],   callback_data=callback_prefix + 'EVERY_DAY'),
         types.InlineKeyboardButton(text['every_week'],  callback_data=callback_prefix + 'EVERY_WEEK'),
-        types.InlineKeyboardButton(text['return_back'], callback_data='quotes_menu'),
+        types.InlineKeyboardButton(text['return_back'], callback_data=callback_prefix + 'RETURN'),
         row_width=2,
     )
     return markup
@@ -38,7 +38,7 @@ def build_subscribing_base_weekday_step(language: LanguageCode):
         types.InlineKeyboardButton(text['friday'],      callback_data=callback_prefix + 'FRIDAY'),
         types.InlineKeyboardButton(text['saturday'],    callback_data=callback_prefix + 'SATURDAY'),
         types.InlineKeyboardButton(text['sunday'],      callback_data=callback_prefix + 'SUNDAY'),
-        types.InlineKeyboardButton(text['return_back'], callback_data='quotes_menu'),
+        types.InlineKeyboardButton(text['return_back'], callback_data=callback_prefix + 'RETURN'),
     )
     return markup
 
@@ -54,7 +54,7 @@ def build_subscribing_timezone_menu(language: LanguageCode):
         types.InlineKeyboardButton(text['timezone_4'],      callback_data=callback_prefix + text['timezone_4'].replace('/', '%')),
         types.InlineKeyboardButton(text['timezone_5'],      callback_data=callback_prefix + text['timezone_5'].replace('/', '%')),
         types.InlineKeyboardButton(text['custom_timezone'], callback_data=callback_prefix + 'CUSTOM'),
-        types.InlineKeyboardButton(text['return_back'],     callback_data='quotes_menu'),
+        types.InlineKeyboardButton(text['return_back'],     callback_data=callback_prefix + 'RETURN'),
         row_width=2,
     )
     return markup
@@ -71,7 +71,7 @@ def build_subscribing_base_time_menu(language: LanguageCode):
         types.InlineKeyboardButton(text['base_time_4'],      callback_data=callback_prefix + text['base_time_4'].replace('/', '%')),
         types.InlineKeyboardButton(text['base_time_5'],      callback_data=callback_prefix + text['base_time_5'].replace('/', '%')),
         types.InlineKeyboardButton(text['custom_base_time'], callback_data=callback_prefix + 'CUSTOM'),
-        types.InlineKeyboardButton(text['return_back'],     callback_data='quotes_menu'),
+        types.InlineKeyboardButton(text['return_back'],     callback_data=callback_prefix + 'RETURN'),
     )
     return markup
 
@@ -82,7 +82,7 @@ def build_manage_subscriptions_menu(language: LanguageCode):
     markup = types.InlineKeyboardMarkup()
     markup.add(
         types.InlineKeyboardButton(text['remove'],      callback_data=callback_prefix + 'REMOVE'),
-        types.InlineKeyboardButton(text['return_back'], callback_data='quotes_menu'),
+        types.InlineKeyboardButton(text['return_back'], callback_data=callback_prefix + 'RETURN'),
         row_width=1,
     )
     return markup

@@ -21,6 +21,8 @@ def register_handlers(bot):
         (apply(bot)(handlers.on_subscribe_cmd))
     bot.message_handler(regexp='|'.join(translated_menu['quotes_menu']['subscribe'] for translated_menu in MENU.values()))\
         (apply(bot)(handlers.on_subscribe_msg))
+    bot.callback_query_handler(func=lambda call: call.data.startswith('subscribing') and call.data.endswith('RETURN'))\
+        (apply(bot)(handlers.on_subscribing_return_call))
     bot.callback_query_handler(func=lambda call: call.data.startswith('subscribing/interval_menu'))\
         (apply(bot)(handlers.on_subscribing_interval_call))
     bot.callback_query_handler(func=lambda call: call.data.startswith('subscribing/base_weekday_menu'))\

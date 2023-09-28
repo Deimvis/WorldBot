@@ -62,6 +62,11 @@ def on_subscribing_base_time_call(bot, callback):
         api.create_subscription(bot, callback.message.chat.id, callback.message.message_id, get_language(callback))
 
 
+def on_subscribing_return_call(bot, callback):
+    api.cancel_subscribing(bot, callback.message.chat.id, callback.message.message_id, get_language(callback))
+    api.send_quotes_menu(bot, callback.message.chat.id, get_language(callback))
+
+
 def on_manage_subscriptions_cmd(bot, message):
     api.send_manage_subscriptions_menu(bot, message.chat.id, get_language(message))
 

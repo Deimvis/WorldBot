@@ -34,7 +34,7 @@ def send_subscribing_interval_step(bot, chat_id: int, language: LanguageCode) ->
 
 def handle_subscribing_interval_step(bot, chat_id: int, msg_id: int, data: str, language: LanguageCode):
     def fallback():
-        bot.edit_message_text(MSG[language.name]['subscribing']['cancelled'].r(), chat_id, msg_id)
+        cancel_subscribing(bot, chat_id, msg_id, language)
         bot.send_message(chat_id, MSG[language.name]['subscribing']['unexpected_error'].r(), reply_markup=menus.build_quotes_menu(language))
 
     logging.debug(f'Interval step callback data: {data}')
@@ -48,7 +48,7 @@ def send_subscribing_base_weekday_step(bot, chat_id: int, msg_id: int, language:
 
 def handle_subscribing_base_weekday_step(bot, chat_id: int, msg_id: int, data: str, language: LanguageCode):
     def fallback():
-        bot.edit_message_text(MSG[language.name]['subscribing']['cancelled'].r(), chat_id, msg_id)
+        cancel_subscribing(bot, chat_id, msg_id, language)
         bot.send_message(chat_id, MSG[language.name]['subscribing']['unexpected_error'].r(), reply_markup=menus.build_quotes_menu(language))
 
     logging.debug(f'Base weekday step callback data: {data}')
@@ -62,7 +62,7 @@ def send_subscribing_timezone_step(bot, chat_id: int, msg_id: int, language: Lan
 
 def handle_subscribing_timezone_step(bot, chat_id: int, msg_id: int, data: str, language: LanguageCode):
     def fallback():
-        bot.edit_message_text(MSG[language.name]['subscribing']['cancelled'].r(), chat_id, msg_id)
+        cancel_subscribing(bot, chat_id, msg_id, language)
         bot.send_message(chat_id, MSG[language.name]['subscribing']['unexpected_error'].r(), reply_markup=menus.build_quotes_menu(language))
 
     logging.debug(f'Timezone step callback data: {data}')
@@ -73,7 +73,7 @@ def handle_subscribing_timezone_step(bot, chat_id: int, msg_id: int, data: str, 
 def send_subscribing_custom_timezone_step(bot, chat_id: int, msg_id: int, language: LanguageCode) -> telebot.types.Message:
     def handle_custom_timezone(message):
         def fallback():
-            bot.edit_message_text(MSG[language.name]['subscribing']['cancelled'].r(), chat_id, msg_id)
+            cancel_subscribing(bot, chat_id, msg_id, language)
             bot.send_message(chat_id, MSG[language.name]['subscribing']['bad_custom_timezone'].r(), reply_markup=menus.build_quotes_menu(language))
 
         logging.debug(f'Custom timezone step msg: {message.text}')
@@ -93,7 +93,7 @@ def send_subscribing_base_time_step(bot, chat_id: int, msg_id: int, language: La
 
 def handle_subscribing_base_time_step(bot, chat_id: int, msg_id: int, data: str, language: LanguageCode):
     def fallback():
-        bot.edit_message_text(MSG[language.name]['subscribing']['cancelled'].r(), chat_id, msg_id)
+        cancel_subscribing(bot, chat_id, msg_id, language)
         bot.send_message(chat_id, MSG[language.name]['subscribing']['unexpected_error'].r(), reply_markup=menus.build_quotes_menu(language))
 
     logging.debug(f'Base time step callback data: {data}')
@@ -104,7 +104,7 @@ def handle_subscribing_base_time_step(bot, chat_id: int, msg_id: int, data: str,
 def send_subscribing_custom_base_time_step(bot, chat_id: int, msg_id: int, language: LanguageCode) -> telebot.types.Message:
     def handle_custom_base_time(message):
         def fallback():
-            bot.edit_message_text(MSG[language.name]['subscribing']['cancelled'].r(), chat_id, msg_id)
+            cancel_subscribing(bot, chat_id, msg_id, language)
             bot.send_message(chat_id, MSG[language.name]['subscribing']['bad_custom_base_time'].r(), reply_markup=menus.build_quotes_menu(language))
 
         logging.debug(f'Base time step msg: {message.text}')
@@ -119,7 +119,7 @@ def send_subscribing_custom_base_time_step(bot, chat_id: int, msg_id: int, langu
 
 def create_subscription(bot, chat_id: int, msg_id: int, language: LanguageCode) -> telebot.types.Message:
     def fallback():
-        bot.edit_message_text(MSG[language.name]['subscribing']['cancelled'].r(), chat_id, msg_id)
+        cancel_subscribing(bot, chat_id, msg_id, language)
         bot.send_message(chat_id, MSG[language.name]['subscribing']['unexpected_error'].r(), reply_markup=menus.build_quotes_menu(language))
 
     subscription = get_subscription_builder(chat_id).create_subscription(chat_id, language, fallback=fallback)
@@ -127,6 +127,10 @@ def create_subscription(bot, chat_id: int, msg_id: int, language: LanguageCode) 
     QUOTES_SUBSCRIPTION_TABLE.commit()
     bot.edit_message_text(MSG[language.name]['subscribing']['done_template'].r().format(subscription=subscription.overview(language)), chat_id, msg_id)
     return bot.send_message(chat_id, MSG[language.name]['subscribing']['congratulations'].r(), reply_markup=menus.build_quotes_menu(language))
+
+
+def cancel_subscribing(bot, chat_id: int, msg_id: int, langauge: LanguageCode) -> telebot.types.Message:
+    return bot.edit_message_text(MSG[langauge.name]['subscribing']['cancelled'].r(), chat_id, msg_id)
 
 
 def send_manage_subscriptions_menu(bot, chat_id: int, language: LanguageCode) -> telebot.types.Message:
