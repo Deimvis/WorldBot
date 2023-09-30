@@ -74,7 +74,7 @@ def send_subscribing_custom_timezone_step(bot, chat_id: int, msg_id: int, langua
     def handle_custom_timezone(message):
         def fallback():
             cancel_subscribing(bot, chat_id, msg_id, language)
-            bot.send_message(chat_id, MSG[language.name]['subscribing']['bad_custom_timezone'].r(), reply_markup=menus.build_quotes_menu(language))
+            bot.send_message(chat_id, MSG[language.name]['subscribing']['bad_custom_timezone'].r(), parse_mode='HTML', reply_markup=menus.build_quotes_menu(language))
 
         logging.debug(f'Custom timezone step msg: {message.text}')
         timezone = message.text
@@ -82,7 +82,7 @@ def send_subscribing_custom_timezone_step(bot, chat_id: int, msg_id: int, langua
         send_subscribing_base_time_step(bot, chat_id, msg_id, language)
 
     # NOTE: link to list with timezones
-    msg = bot.edit_message_text(MSG[language.name]['subscribing']['custom_timezone_step'].r(), chat_id, msg_id)
+    msg = bot.edit_message_text(MSG[language.name]['subscribing']['custom_timezone_step'].r(), chat_id, msg_id, parse_mode='HTML',)
     bot.register_next_step_handler(msg, handle_custom_timezone)
     return msg
 
