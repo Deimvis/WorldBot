@@ -2,7 +2,7 @@
     "start": "Hi! 🖐\nWelcome to the kingdom of knowledge. What are we going to do this modest evening?",
     "bad_message_reaction": "Sorry, can't understand you 😔",
     "quotes_menu": [
-        "🧸\n I will just leave him there.\nSo... don't feel lonely 🙂️",
+        "🧸\n I will just place him there.\nSo... don't feel lonely 🙂️",
         "Do you also know how to draw an owl?\n  🦉 = ⭕ + ⭕ + ✨",
         "\"Follow your own path, no matter what people say.\"",
         "The only way to make your life full is never stop dreaming 🪂"
@@ -16,8 +16,8 @@
         "interval_step": "Cool! Choose how often you want to receive quotes",
         "base_weekday_step": "Choose day of week",
         "timezone_step": "Specify your time zone",
-        "custom_timezone_step": "Text me your timezone\nAll supported timezones: TODO",
-        "bad_custom_timezone": "Specified timezone is not found. Please check all supported timezones: TODO",
+        "custom_timezone_step": "Text me your timezone\nAll supported timezones: <a href=\"https://github.com/Deimvis/WorldBot/blob/main/misc/all_timezones.txt\">supported timzones</a>",
+        "bad_custom_timezone": "Specified timezone is not found. Please check all supported timezones: <a href=\"https://github.com/Deimvis/WorldBot/blob/main/misc/all_timezones.txt\">supported timzones</a>",
         "base_time_step": "Last step: Choose preferrable time",
         "custom_base_time_step": "Text me preferrable time in 24-hour format HH:MM\nFor example, 08:00 or 13:45",
         "bad_custom_base_time": "Specified time is incorrect",

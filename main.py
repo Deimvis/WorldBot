@@ -15,7 +15,6 @@ if os.getenv('DEBUG'):
         datefmt="%d/%b/%Y %H:%M:%S",
     )
     logging.getLogger('urllib3').setLevel(logging.WARNING)
-    logging.getLogger('yt').setLevel(logging.WARNING)
 else:
     logging.basicConfig(
         level=logging.INFO,

@@ -5,5 +5,6 @@ venv/
 .env.test
 .env.prod
 .DS_Store
+.todo
 db.db
 r
