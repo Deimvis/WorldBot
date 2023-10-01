@@ -1,3 +1,7 @@
+<b># v2.1 – Oct 1, 2023</b>
+* New quotes (over 1000 quotes now)
+* Bug fixes
+
 <b># v2.0 – Sep 28, 2023</b>
 * New design
 * Multi-language support
