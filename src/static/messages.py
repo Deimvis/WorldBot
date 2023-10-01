@@ -1,3 +1,4 @@
+import math
 import os
 import random
 from pathlib import Path
@@ -23,7 +24,7 @@ class RandomMessage(list, Shortcuts):
 
 class ProbabilisticMessage(DictBaseModel, Shortcuts):
     type: str
-    options: List[Tuple[float, str]]
+    options: List[List[float | str]]
 
     @field_validator('type')
     @classmethod
@@ -34,15 +35,15 @@ class ProbabilisticMessage(DictBaseModel, Shortcuts):
     @field_validator('options')
     @classmethod
     def values_is_valid(cls, v):
-        total_probability = 0
+        for option in v:
+            assert len(option) == 2, 'Options should have length equal 2 (probability and message)'
         for probability, _ in v:
             assert 0 <= probability <= 1, 'Probability is out of range [0, 1]'
-            total_probability += probability
-        assert total_probability == 1.0, 'Total probability is not 1.0'
+        assert math.isclose(math.fsum(prob for prob, _ in v), 1.0), 'Total probability is not 1.0'
         return v
 
     def resolve(self) -> str:
-        return random.choices(self.options.values(), weights=[float(prob) for prob in self.options.keys()])
+        return random.choices([msg for _, msg in self.options], weights=[prob for prob, _ in self.options])
 
 
 Message = str | List[str] | ProbabilisticMessage

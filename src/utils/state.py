@@ -6,6 +6,11 @@ class StateNode:
         self._data = {}
         self._frozen_keys = set()
 
+    def get(self, key: str, default: Any = None) -> Any:
+        if key not in self._data:
+            return default
+        return self._data[key]
+
     def __getitem__(self, key: str) -> Any:
         if key not in self._data:
             self._data[key] = StateNode()

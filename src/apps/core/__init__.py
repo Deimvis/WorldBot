@@ -9,5 +9,7 @@ def register_handlers(bot):
         (apply(bot)(handlers.on_last_updates_cmd))
     bot.message_handler(commands=['about'])\
         (apply(bot)(handlers.on_about_cmd))
+    bot.message_handler(commands=['easter_egg'])\
+        (apply(bot)(handlers.on_easter_egg_cmd))
     bot.message_handler(content_types=['text'])\
         (apply(bot)(handlers.on_unhandeled_msg))

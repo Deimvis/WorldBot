@@ -1,14 +1,30 @@
 {
     "start": "Hi! 🖐\nWelcome to the kingdom of knowledge. What are we going to do this modest evening?",
-    "bad_message_reaction": "Sorry, can't understand you 😔",
-    "quotes_menu": [
-        "🧸\n I will just place him there.\nSo... don't feel lonely 🙂️",
-        "Do you also know how to draw an owl?\n  🦉 = ⭕ + ⭕ + ✨",
-        "\"Follow your own path, no matter what people say.\"",
-        "The only way to make your life full is never stop dreaming 🪂"
-    ],
+    "bad_message_reaction": {
+        "type": "probabilistic",
+        "options": [
+            [0.98, "Sorry, can't understand you 😔"],
+            [0.02, "Sorry, I'm not chatGPT 9000"]
+        ]
+    },
+    "quotes_menu": {
+        "type": "probabilistic",
+        "options": [
+            [0.15, "\"Follow your own path, no matter what people say.\""],
+            [0.10, "🧸\n I will just place him there.\nSo... don't feel lonely 🙂️"],
+            [0.10, "Do you also know how to draw an owl?\n  🦉 = ⭕ + ⭕ + ✨"],
+            [0.10, "The only way to make your life full is never stop dreaming 🪂"],
+            [0.10, "Don't be scared, but some jellyfish can actually see you 😱"],
+            [0.10, "You can do not believe in magic, I understand.\nBut remember that Scotland's national animal is a unicorn 🦄"],
+            [0.10, "Have you heard that firefox is actually a red panda?? 😧"],
+            [0.10, "Great things take time ⏳"],
+            [0.10, "When you do something good, you always forget that you can do great 🏅"],
+            [0.049, "We're just kids 🙃"],
+            [0.001, "🥚"]
+        ]
+    },
     "quoting": {
-        "no_quotes": "Wow! Something serious must've happened - I found no quotes.\nCome back later, I'm already trying to fix everything",
+        "no_quotes": "Wow! Something serious must've happened - I found no quotes.\nCome back later, I'm already trying to fix everything\n🚧🚧🚧",
         "quote_template": "{text}\n<i>{author}</i>"
     },
     "subscribing": {

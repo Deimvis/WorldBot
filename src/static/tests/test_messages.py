@@ -29,7 +29,8 @@ class TestRandomMessage(unittest.TestCase):
 class TestProbabilisticMessage(unittest.TestCase):
 
     def test_smoke(self):
-        _ = ProbabilisticMessage(type='probabilistic', options=[(0.5, 'a'), (0.5, 'b')])
+        msg = ProbabilisticMessage(type='probabilistic', options=[(0.5, 'a'), (0.5, 'b')])
+        msg.resolve()
 
     def test_invalid_probability(self):
         with self.assertRaises(ValidationError):
