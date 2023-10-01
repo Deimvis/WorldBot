@@ -9,14 +9,15 @@ from src.apps.quotes.scrapers.utils import CLOSING_QUOTES, DASHES, OPENING_QUOTE
 from bs4 import BeautifulSoup
 
 
-log_ = logging.getLogger('ShoppifyMotivaionalScraper')
+log_ = logging.getLogger('PowerOfPositivityFamousScraper')
 
 
-class ShoppifyMotivaionalScraper(ScraperBase):
-    SOURCE_NAME = 'shopify/motivational/ENG'
-    URL = 'https://www.shopify.com/blog/motivational-quotes'
+class PowerOfPositivityFamousScraper(ScraperBase):
+    SOURCE_NAME = 'powerofpositivity/wisest/ENG'
+    URL = 'https://www.powerofpositivity.com/100-of-the-wisest-quotes-of-all-time/'
     LANGUAGE = LanguageCode.ENG
 
+    # TODO:
     def scrape(self) -> Iterable[Quote]:
         soup = self.get_soup()
         rows = soup.select_one('.article__content').select('ol li')

@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import sys
-from tqdm import tqdm
 
 sys.path.append('.')
 from src.apps.quotes.scrapers import scrape_all
@@ -9,7 +8,7 @@ from src.apps.quotes.db import QUOTE_TABLE
 
 def main():
     rows = []
-    for quote in tqdm(scrape_all(), desc='scrape_all'):
+    for quote in scrape_all():
         rows.append(quote.to_database_row())
     QUOTE_TABLE.truncate()
     QUOTE_TABLE.insert(rows, conflict_columns=('author', 'text'), conflict_do_nothing=True)

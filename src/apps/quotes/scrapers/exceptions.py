@@ -1,0 +1,3 @@
+
+class BadDataException(Exception):
+    pass

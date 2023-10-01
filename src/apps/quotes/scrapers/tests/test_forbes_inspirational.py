@@ -7,10 +7,11 @@ from lib.requesters import DefaultRequester
 
 class TestForbesInspirationalScraper(unittest.TestCase):
 
-    def setUp(self):
-        self.requester = DefaultRequester()
-        self.scraper = ForbesInspirationalScraper(self.requester)
-        self.scrape_result = list(self.scraper.scrape())
+    @classmethod
+    def setUpClass(cls):
+        cls.requester = DefaultRequester()
+        cls.scraper = ForbesInspirationalScraper(cls.requester)
+        cls.scrape_result = list(cls.scraper.scrape())
 
     def test_smoke(self):
         self.assertIsNotNone(self.scrape_result)

@@ -1,6 +1,6 @@
 from typing import Iterable
 from src.apps.core.types import LanguageCode
-from src.apps.quotes.types import Quote, Source
+from src.apps.quotes.types import Quote
 from src.apps.quotes.scrapers.base import ScraperBase
 from bs4 import BeautifulSoup
 

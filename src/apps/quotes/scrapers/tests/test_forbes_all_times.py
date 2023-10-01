@@ -6,10 +6,11 @@ from lib.requesters import DefaultRequester
 
 class TestForbesAllTimesScraper(unittest.TestCase):
 
-    def setUp(self):
-        self.requester = DefaultRequester()
-        self.scraper = ForbesAllTimesScraper(self.requester)
-        self.scrape_result = list(self.scraper.scrape())
+    @classmethod
+    def setUpClass(cls):
+        cls.requester = DefaultRequester()
+        cls.scraper = ForbesAllTimesScraper(cls.requester)
+        cls.scrape_result = list(cls.scraper.scrape())
 
     def test_smoke(self):
         self.assertIsNotNone(self.scrape_result)
