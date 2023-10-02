@@ -1,4 +1,5 @@
-from pydantic import BaseModel, validator
+from pydantic import BaseModel
+from src.apps.core.types import LanguageCode
 from src.utils.state import StateNode
 
 
@@ -6,26 +7,17 @@ GLOBAL_STATE = StateNode()
 
 
 class Session(BaseModel):
-    interface_language: str
+    interface_language: LanguageCode
 
     # quotes
-    quotes_language: str
-
-    @validator('interface_language')
-    def is_interface_language_valid(cls, v):
-        cls.assert_satisfy_ISO639_3(v)
-        return v
-
-    @validator('quotes_language')
-    def is_quotes_language_valid(cls, v):
-        cls.assert_satisfy_ISO639_3(v)
-        return v
-
-    @classmethod
-    def assert_satisfy_ISO639_3(cls, v):
-        # TODO: make common method to check for ISO639-3
-        assert v in ('RUS', 'ENG')
+    quotes_language: LanguageCode
 
 
 GLOBAL_STATE['sessions'] = {}
 GLOBAL_STATE.freeze_key('sessions')
+
+
+def clear_state():
+    GLOBAL_STATE = StateNode()
+    GLOBAL_STATE['sessions'] = {}
+    GLOBAL_STATE.freeze_key('sessions')

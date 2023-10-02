@@ -8,6 +8,3 @@ def build_main_menu(language: LanguageCode):
     button_quotes = types.KeyboardButton(MENU[language.name]['main_menu']['quotes_menu'])
     markup.add(button_quotes)
     return markup
-
-
-# main_menu = build_main_menu()

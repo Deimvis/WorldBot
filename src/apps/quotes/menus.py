@@ -26,7 +26,7 @@ def build_subscribing_interval_menu(language: LanguageCode):
     return markup
 
 
-def build_subscribing_base_weekday_step(language: LanguageCode):
+def build_subscribing_base_weekday_menu(language: LanguageCode):
     callback_prefix = 'subscribing/base_weekday_menu/'
     text = MENU[language.name]['subscribing']['base_weekday_menu']
     markup = types.InlineKeyboardMarkup()

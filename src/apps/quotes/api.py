@@ -43,7 +43,7 @@ def handle_subscribing_interval_step(bot, chat_id: int, msg_id: int, data: str, 
 
 
 def send_subscribing_base_weekday_step(bot, chat_id: int, msg_id: int, language: LanguageCode) -> telebot.types.Message:
-    return bot.edit_message_text(MSG[language.name]['subscribing']['base_weekday_step'].r(), chat_id, msg_id, reply_markup=menus.build_subscribing_base_weekday_step(language))
+    return bot.edit_message_text(MSG[language.name]['subscribing']['base_weekday_step'].r(), chat_id, msg_id, reply_markup=menus.build_subscribing_base_weekday_menu(language))
 
 
 def handle_subscribing_base_weekday_step(bot, chat_id: int, msg_id: int, data: str, language: LanguageCode):

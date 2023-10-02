@@ -7,9 +7,10 @@ class StateNode:
         self._frozen_keys = set()
 
     def get(self, key: str, default: Any = None) -> Any:
-        if key not in self._data:
-            return default
-        return self._data[key]
+        return self._data.get(key, default)
+
+    def pop(self, key: str, default: Any = None) -> Any:
+        return self._data.pop(key, default)
 
     def __getitem__(self, key: str) -> Any:
         if key not in self._data:

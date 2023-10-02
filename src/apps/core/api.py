@@ -2,7 +2,6 @@ import telebot
 import time
 import src.apps.core.menus as menus
 from src.apps.core.shortcuts import get_language, flood_trigger
-from src.apps.core.state import GLOBAL_STATE
 from src.apps.core.types import LanguageCode
 from src.static import MSG
 

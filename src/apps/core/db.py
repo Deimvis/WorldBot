@@ -16,7 +16,7 @@ connection = psycopg2.connect(
 USER_TABLE = PostgresTable(connection, 'user')
 
 
-def update_user_info(user: telebot.types.User):
+def update_user_info(user: telebot.types.User) -> None:
     if not USER_TABLE.has(where={'id': user.id}):
         USER_TABLE.insert([{
             'id': user.id,

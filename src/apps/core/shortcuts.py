@@ -6,7 +6,7 @@ from src.apps.core.types import LanguageCode
 
 
 def get_language(chat_entity: telebot.types.Message | telebot.types.CallbackQuery) -> LanguageCode:
-    # returns ISO639-3 language code
+    """ Returns ISO639-3 language code """
     if isinstance(chat_entity, telebot.types.Message):
         return LanguageCode.from_IETF(chat_entity.from_user.language_code)
     if isinstance(chat_entity, telebot.types.CallbackQuery):
@@ -18,7 +18,7 @@ def flood_trigger(chat_id: int) -> bool:
     now = int(time.time())
     GLOBAL_STATE['bad_message'][chat_id]['queue'] = GLOBAL_STATE['bad_message'][chat_id].get('queue', deque())
     queue = GLOBAL_STATE['bad_message'][chat_id]['queue']
-    while queue and now - queue[0] > 10:
+    while queue and now - queue[0] >= 10:
         queue.popleft()
     queue.append(now)
     is_flooding = len(queue) >= 10

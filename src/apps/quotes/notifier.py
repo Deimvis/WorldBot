@@ -28,7 +28,7 @@ class QuoteNotifier:
             return False
         if subscription.base_hour != now.hour:
             return False
-        if subscription.base_weekday is not None and subscription.base_weekday != now.weekday:
+        if subscription.base_weekday is not None and subscription.base_weekday != now.weekday():
             return False
         return True
 
