@@ -1,3 +1,6 @@
+<b># v2.2.1 – Oct 2, 2023</b>
+* Weekly subscriptions bug fix
+
 <b># v2.2 – Oct 2, 2023</b>
 * New bot reactions (+secret reactions)
 * Smart interactions
