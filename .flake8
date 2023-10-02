@@ -1,4 +1,8 @@
 [flake8]
-ignore = E203, E401, W504
-max-line-length = 120
-exclude = venv
+ignore = E203, E226, E401, W504
+max-line-length = 180
+exclude =
+    venv
+    */tests/*
+    src/apps/core/__init__.py
+    src/apps/quotes/__init__.py

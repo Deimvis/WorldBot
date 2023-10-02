@@ -1,6 +1,5 @@
 import os
 from pathlib import Path
-from pydantic import validator
 from typing import Dict, List
 from src.static.utils import DictBaseModel
 
@@ -59,7 +58,6 @@ class ManagingSubscriptions(DictBaseModel):
     class MainMenu(DictBaseModel):
         remove: str
         return_back: str
-
 
     class RemoveMenu(DictBaseModel):
         button_template: str

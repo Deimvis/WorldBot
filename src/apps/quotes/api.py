@@ -153,7 +153,7 @@ def send_remove_subscription_menu(bot, chat_id: int, msg_id: int, language: Lang
     subscriptions = [Subscription.from_database_row(row) for row in subscription_rows]
     subscription_lines = '\n'.join(text['subscription_line_template'].r().format(num=ind+1, subscription=sub.overview(language)) for ind, sub in enumerate(subscriptions))
     sub_ids = [row['id'] for row in subscription_rows]
-    return bot.edit_message_text(text['remove_menu_template'].r().format(subscription_lines=subscription_lines), chat_id, msg_id, reply_markup=menus.build_remove_subscription_menu(sub_ids, language))
+    return bot.edit_message_text(text['remove_menu_template'].r().format(subscription_lines=subscription_lines), chat_id, msg_id, reply_markup=menus.build_remove_subscription_menu(sub_ids, language))  # noqa
 
 
 def remove_subscription(bot, chat_id: int, msg_id: int, data: str, language: LanguageCode):
@@ -179,4 +179,4 @@ def return_to_manage_subscriptions_menu(bot, chat_id: int, msg_id: int, language
     subscription_rows.sort(key=lambda row: row['id'])
     subscriptions = [Subscription.from_database_row(row) for row in subscription_rows]
     subscription_lines = '\n'.join(text['subscription_line_template'].r().format(num=ind+1, subscription=sub.overview(language)) for ind, sub in enumerate(subscriptions))
-    return bot.edit_message_text(text['main_menu_template'].r().format(subscription_lines=subscription_lines), chat_id, msg_id, reply_markup=menus.build_manage_subscriptions_menu(language))
+    return bot.edit_message_text(text['main_menu_template'].r().format(subscription_lines=subscription_lines), chat_id, msg_id, reply_markup=menus.build_manage_subscriptions_menu(language))  # noqa

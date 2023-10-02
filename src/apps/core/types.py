@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class LanguageCode_ISO639_3(Enum):
     ENG = 1
     RUS = 2
@@ -9,5 +10,6 @@ class LanguageCode_ISO639_3(Enum):
         if IETF_language_code == 'ru':
             return LanguageCode_ISO639_3.RUS
         return LanguageCode_ISO639_3.ENG
+
 
 LanguageCode = LanguageCode_ISO639_3

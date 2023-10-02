@@ -3,22 +3,23 @@ import os
 from psycopg2.extensions import AsIs
 from src.utils.postgres import PostgresConnection, create_database, drop_database
 
+
 def init_db():
     with PostgresConnection(
-                host=os.getenv('DB_HOST'),
-                port=os.getenv('DB_PORT'),
-                user=os.getenv('DB_USER'),
-                password=os.getenv('DB_PASSWORD'),
-            ) as conn:
+        host=os.getenv('DB_HOST'),
+        port=os.getenv('DB_PORT'),
+        user=os.getenv('DB_USER'),
+        password=os.getenv('DB_PASSWORD'),
+    ) as conn:
         create_database(conn, os.getenv('DB_NAME'), if_not_exists=True)
 
     with PostgresConnection(
-                host=os.getenv('DB_HOST'),
-                port=os.getenv('DB_PORT'),
-                user=os.getenv('DB_USER'),
-                password=os.getenv('DB_PASSWORD'),
-                db_name=os.getenv('DB_NAME'),
-            ) as conn:
+        host=os.getenv('DB_HOST'),
+        port=os.getenv('DB_PORT'),
+        user=os.getenv('DB_USER'),
+        password=os.getenv('DB_PASSWORD'),
+        db_name=os.getenv('DB_NAME'),
+    ) as conn:
         with conn.cursor() as cursor:
             cursor.execute(
                 """CREATE TABLE IF NOT EXISTS %s (
@@ -56,9 +57,9 @@ def init_db():
 
 def drop_db():
     with PostgresConnection(
-                host=os.getenv('DB_HOST'),
-                port=os.getenv('DB_PORT'),
-                user=os.getenv('DB_USER'),
-                password=os.getenv('DB_PASSWORD'),
-            ) as conn:
+        host=os.getenv('DB_HOST'),
+        port=os.getenv('DB_PORT'),
+        user=os.getenv('DB_USER'),
+        password=os.getenv('DB_PASSWORD'),
+    ) as conn:
         drop_database(conn, os.getenv('DB_NAME'))

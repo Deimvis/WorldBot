@@ -12,7 +12,14 @@ from src.apps.quotes.scrapers.shopify_motivational import ShoppifyMotivaionalScr
 
 def scrape_all() -> List[Quote]:
     requester = DefaultRequester()
-    scrapers = [ForbesAllTimesScraper(requester), OberloMotivaionalScraper(requester), ForbesInspirationalScraper(requester), ShoppifyMotivaionalScraper(requester), PlerdyWellKnownScraper(requester), HubspotAllScraper(requester)]
+    scrapers = [
+        ForbesAllTimesScraper(requester),
+        OberloMotivaionalScraper(requester),
+        ForbesInspirationalScraper(requester),
+        ShoppifyMotivaionalScraper(requester),
+        PlerdyWellKnownScraper(requester),
+        HubspotAllScraper(requester),
+    ]
     quotes = []
     for scraper in tqdm(scrapers, desc='scrape_all'):
         for quote in scraper.scrape():

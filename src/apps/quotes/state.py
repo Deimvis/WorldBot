@@ -12,35 +12,35 @@ class SubscriptionBuilder:
     def set_interval(self, interval: str, fallback: Callable[[], Any]):
         try:
             self.raw_subscription.interval = interval
-        except:
+        except:  # noqa
             fallback()
             raise
 
     def set_base_weekday(self, base_weekday: str, fallback: Callable[[], Any]):
         try:
             self.raw_subscription.base_weekday = base_weekday
-        except:
+        except:  # noqa
             fallback()
             raise
 
     def set_timezone(self, timezone: str, fallback: Callable[[], Any]):
         try:
             self.raw_subscription.timezone = timezone
-        except:
+        except:  # noqa
             fallback()
             raise
 
     def set_base_time(self, base_time: str, fallback: Callable[[], Any]):
         try:
             self.raw_subscription.base_time = base_time
-        except:
+        except:  # noqa
             fallback()
             raise
 
     def create_subscription(self, chat_id: int, language: LanguageCode, fallback: Callable[[], Any]) -> Subscription:
         try:
             return Subscription.from_raw_subscription(self.raw_subscription, chat_id, language)
-        except:
+        except:  # noqa
             fallback()
             raise
 

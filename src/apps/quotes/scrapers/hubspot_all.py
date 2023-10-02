@@ -1,14 +1,11 @@
 import csv
 import logging
-import re
 import os
 from pathlib import Path
 from typing import Iterable
 from src.apps.core.types import LanguageCode
 from src.apps.quotes.types import Quote
 from src.apps.quotes.scrapers.base import ScraperBase
-from src.apps.quotes.scrapers.exceptions import BadDataException
-from src.apps.quotes.scrapers.utils import CLOSING_QUOTES, DASHES, OPENING_QUOTES
 
 
 log_ = logging.getLogger('HubspotAllScraper')
