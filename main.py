@@ -5,6 +5,8 @@ import traceback
 import telebot
 import src.apps.core as core
 import src.apps.quotes as quotes
+from requests.exceptions import ReadTimeout
+from requests.exceptions import ConnectionError
 from src.apps.quotes.notifier import QuoteNotifier
 
 
@@ -35,6 +37,10 @@ def main():
     while True:
         try:
             bot.polling(non_stop=True)
+        except ConnectionError:
+            pass
+        except ReadTimeout:
+            pass
         except Exception as error:
             error_msg = f'---ERROR---\nError:{error}\nTraceback:{traceback.format_exc()}'
             logging.error(error_msg)
