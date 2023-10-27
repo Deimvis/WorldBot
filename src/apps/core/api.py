@@ -45,4 +45,5 @@ def send_bad_message_flooding_reaction(bot: telebot.TeleBot, message: telebot.ty
         cnt = min(cnt * 2, 4096)
         bot.edit_message_text('A' * cnt, message.chat.id, msg.id)
     time.sleep(0.1)
+    bot.delete_message(message.chat.id, msg.id)
     send_start_menu(bot, message.chat.id, get_language(message))
