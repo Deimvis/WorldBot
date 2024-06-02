@@ -2,17 +2,36 @@
 
 set -ex
 
-TARGET_HOST=${1:-ya_cloud_world_bot}
+SSH_USER=dbrusenin
+SSH_HOST=${1:-ya_cloud_world_bot}
 REMOTE_WORKDIR=${2:-/home/dbrusenin/world_bot}
 
 docker-compose -f docker-compose.prod.yaml build
 docker-compose -f docker-compose.prod.yaml push
 
 ./deploy/make_deploy_docker_compose docker-compose.prod.yaml deploy/bundle/docker-compose.yaml
-cp .env.prod deploy/bundle/.env.prod
+cp .env.vm deploy/bundle/.env
 
-scp -r deploy/bundle/. dbrusenin@$TARGET_HOST:$REMOTE_WORKDIR
+function SSH() {
+    local cmd=$1
+    ssh -o "StrictHostKeyChecking no" $SSH_USER@$SSH_HOST $cmd
+}
 
-ssh $TARGET_HOST "$REMOTE_WORKDIR/pull"
-ssh $TARGET_HOST "$REMOTE_WORKDIR/down"
-ssh $TARGET_HOST "$REMOTE_WORKDIR/up"
+function SCP {
+    local src=$1
+    local dst_dir=$2
+    scp -r $src $SSH_USER@$SSH_HOST:$dst_dir
+}
+
+SCP deploy/bundle/. $REMOTE_WORKDIR
+
+SCP secrets/yc_key.json /tmp/yc_key.json
+SSH "cat /tmp/yc_key.json | sudo docker login \
+       --username json_key \
+       --password-stdin \
+       cr.yandex"
+SSH "rm /tmp/yc_key.json"
+
+SSH "$REMOTE_WORKDIR/pull"
+SSH "$REMOTE_WORKDIR/down"
+SSH "$REMOTE_WORKDIR/up"

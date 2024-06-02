@@ -11,6 +11,7 @@ COPY lib     /bot/lib
 COPY scripts /bot/scripts
 COPY main.py /bot/main.py
 
+ENV FILES_DIR_PATH=/bot/files
 ENV PYTHONUNBUFFERED=1
 
 ENTRYPOINT ["./scripts/run"]

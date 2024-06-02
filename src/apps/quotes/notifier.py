@@ -2,6 +2,7 @@ import datetime
 import logging
 import pytz
 import time
+import traceback
 import src.apps.quotes.api as api
 from src.apps.quotes.db import QUOTES_SUBSCRIPTION_TABLE
 from src.apps.quotes.types import Subscription
@@ -13,7 +14,11 @@ class QuoteNotifier:
 
     def run(self):
         while True:
-            self.notify_everyone()
+            try:
+                self.notify_everyone()
+            except Exception as error:
+                error_msg = f'Error: {error}\nTraceback:\n{traceback.format_exc()}'
+                logging.error(f'Something went wrong!\n{error_msg}')
             time.sleep(60 - datetime.datetime.now().second)
 
     def notify_everyone(self):
@@ -33,5 +38,10 @@ class QuoteNotifier:
         return True
 
     def send(self, subscription: Subscription) -> None:
-        logging.debug(f'Send quote to {subscription.chat_id} ({datetime.datetime.now()})')
-        api.send_quote(self.bot, subscription.chat_id, subscription.language)
+        logging.debug(f'Sending quote to "{subscription.chat_id}"... ({datetime.datetime.now()})')
+        try:
+            api.send_quote(self.bot, subscription.chat_id, subscription.language)
+        except Exception as error:
+            status_msg = f'Failed to send quote to "{subscription.chat_id}" ({datetime.datetime.now()})'
+            error_msg = f'Error: {error}\nTraceback:\n{traceback.format_exc()}'
+            logging.error(f'{status_msg}\n{error_msg}')

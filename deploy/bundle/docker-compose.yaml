@@ -2,12 +2,12 @@ version: '3'
 
 services:
 
-  world-bot:
+  bot:
     platform: linux/x86_64
-    image: deimvis/world_bot:latest
-    container_name: world-bot
+    image: cr.yandex/crparlvq5pji2gn67f8s/deimvis/wb_bot:latest
+    container_name: wb_bot
     env_file:
-      - .env.prod
+      - .env
     depends_on:
       - db
     deploy:
@@ -19,14 +19,14 @@ services:
 
   db:
     platform: linux/x86_64
-    image: postgres:15.2
-    container_name: world-bot-db
+    image: mirror.gcr.io/postgres:15.2
+    container_name: wb_db
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     ports:
       - 5434:5432
     env_file:
-      - .env.prod
+      - .env
 
 
 volumes:
